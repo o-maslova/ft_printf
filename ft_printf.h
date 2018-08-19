@@ -36,6 +36,8 @@ typedef struct      s_flags
     short int       hash;
     short int       nul;
     short int       space;
+    short int       negative;
+    short int       precision;
     
 }                   t_flags;
 

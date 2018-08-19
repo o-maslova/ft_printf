@@ -22,6 +22,8 @@ char	*define_flag(char *str, t_flags *var)
 {
 	while (*str)
 	{
+		while (*str >= '1' && *str <= '9')
+		 	str++;
 		if (*str == '-')
 			var->minus = 1;
 		else if (*str == '+')
@@ -32,10 +34,10 @@ char	*define_flag(char *str, t_flags *var)
 			var->hash = 1;
 		else if (*str == ' ')
 			var->space = 1;
+		else if (*str == '.')
+			var->precision = ft_atoi(++str);
 		else
 			break ;
-		// if (*str == '.')
-		// 	set_precision(&str[++i], i, lim);
 		str++;
 	}
 	return (str);
@@ -53,11 +55,11 @@ char	define_operator(char *str, t_arg *var, t_flags *flags)
 	if (i > 0)
 	{
 		var->f_out = (char *)malloc(sizeof(char) * (i + 1));
-		var->format = 1;
 		while (++j < i)
 			var->f_out[j] = str[j];
-		var->f_out = define_flag(var->f_out, flags);
 		var->width = ft_atoi(var->f_out);
+		var->f_out = define_flag(var->f_out, flags);
+	//	var->width = ft_atoi(var->f_out);
 	}
 	if (str[i] == 's')
 		return ('s');
@@ -81,6 +83,8 @@ void	output(char t, va_list tmp, t_arg *var, t_flags *flags)
 	if (t == 'd')
 	{
 		var->d = va_arg(tmp, int);
+		if (var->d < 0)
+			flags->negative = 1;
 		print_d(var, flags);
 	}
 	if (t == 'c')
@@ -167,22 +171,50 @@ void	foo(char *fmt, ...)
 	va_end(ap);
 }
 
-int main(int argc, char **argv)
+int main()
 {
-	int i;
-	char *str;
-	char *str2;
-	char *str3;
+	// foo("%12d\n", 45);
+	// printf("%12d\n", 45);
+	// foo("%012d\n", 45);
+	// printf("%012d\n", 45);
+	// foo("% 012d\n", 45);
+	// printf("% 012d\n", 45);
+	// foo("%+12d\n", 45);
+	// printf("%+12d\n", 45);
+	// foo("%+012d\n", 45);
+	// printf("%+012d\n", 45);
+	// foo("%-12d\n", 45);
+	// printf("%-12d\n", 45);
+	// foo("%- 12d\n", 45);
+	// printf("%- 12d\n", 45);
+	// foo("%-+12d\n", 45);
+	// printf("%-+12d\n\n", 45);
 
-	(void)argc;
-	i = 1;
-	str = argv[1];
-	str2 = argv[2];
-	str3 = argv[3];
-	foo("%012d\n", -45);
-	printf("%012d\n", -45);
+	// foo("%12d\n", -45);
+	// printf("%12d\n", -45);
+	// foo("%012d\n", -45);
+	// printf("%012d\n", -45);
+	// foo("% 012d\n", -45);
+	// printf("% 012d\n", -45);
+	// foo("%+12d\n", -45);
+	// printf("%+12d\n", -45);
+	// foo("%+012d\n", -45);
+	// printf("%+012d\n", -45);
+	// foo("%-12d\n", -45);
+	// printf("%-12d\n", -45);
+	// foo("%- 12d\n", -45);
+	// printf("%- 12d\n", -45);
+	// foo("%-+12d\n", -45);
+	//	printf("%-+12d\n\n", -45);
 
-	// while (i < argc)
-	// 	foo(argv[i++]);
+
+	foo("%d\n", 45);
+	printf("%d\n", 45);
+	foo("%12.4d\n", -45);
+	printf("%12.4d\n", -45);
+	foo("%1.3d\n", 45);
+	printf("%1.3d\n", 45);
+	foo("%1.3d\n", -45);
+	printf("%1.3d\n", -45);
 	return (0);
 }
