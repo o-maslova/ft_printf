@@ -68,10 +68,10 @@ void    print_u(t_arg *var, t_flags *flags)
     str = ft_uitoa(var->u);
     len = ft_strlen(str);
     var->width = var->width > len ? var->width - len : len;
-    if (flags->minus != 1 || flags->precision > len)
+    if (flags->minus != 1 || flags->prsn > len)
     {
-        buff = (char *)malloc(sizeof(char) * (var->width));
-        if (flags->precision > 0)
+        buff = (char *)malloc(sizeof(char) * (var->width) + 1);
+        if (flags->prsn > 0)
             buff = set_precision(var->width, len, buff, flags);
         else
             buff = set_pad(var->width, len, buff, flags);
