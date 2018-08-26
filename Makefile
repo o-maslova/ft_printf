@@ -12,28 +12,29 @@
 
 NAME = libftprintf.a
 
-SRC = 
+SRC = ./ft_printf.c ./integer.c ./uinteger.c ./string.c ./ft_itoa_base.c ./undefine_behavior.c
 
 FLAGS = -Wall -Wextra -Werror
 
-BINS = $(SRC:.c=.o)
+LIBS = ./libft/libft.a
+
+OBJS = $(SRC:.c=.o)
 
 all: $(NAME)
 
-$(NAME): $(BINS)
-	make -C libft
-	ar rc $(NAME) $(BINS)
-
+$(NAME):
+	gcc -c $(FLAGS) libft/*.c -I libft/libft.h
+	gcc -c $(SRC)
+	ar rc $(NAME) *.o
+	
 %.o%.c:
 	gcc $(FLAGS) -o $< -c &< $(LIBS)
 
 clean:
-	make clean -C libft
-	rm -f $(BINS)
+	rm -rf *.o libft/*.o
 	rm -f *~
 
 fclean: clean
-	make fclean -C libft
-	rm -f $(NAME)
+	rm -rf $(NAME) libft/*.a
 
 re: fclean all

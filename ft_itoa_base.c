@@ -70,15 +70,14 @@ char        *rev_str(char *str)
     return (str);
 }
 
-char        *ft_itoa_base(intmax_t nb, int base)
+char        *ft_itoa_base(uintmax_t nb, int base)
 {
     int i;
     char *num;
  
-	nb = nb < 0 ? 4294967295 + nb + 1 : nb;
     num = ft_memalloc(count_num(nb, base) + 1);
 	i = 0;
-    while (nb > base)
+    while (nb >= base)
     {
         num[i++] = define_sym(nb % base);
 		nb = nb / base;

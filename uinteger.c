@@ -54,7 +54,7 @@ char		*ft_uitoa(uintmax_t n)
 	return (str);
 }
 
-void    print_u(t_arg *var, t_flags *fl)
+char    *print_u(t_arg *var, t_flags *fl)
 {
     char    *str;
     char    *buff;
@@ -64,7 +64,7 @@ void    print_u(t_arg *var, t_flags *fl)
     if (fl->plus == 1 || fl->space == 1 || fl->hash ==  1)
     {
         undef_beh(fl, var->type);
-        return ;
+        return (NULL);
     }
     if (fl->prsn > 0)
         str = set_precision(ft_strlen(str), str, fl);
@@ -76,5 +76,5 @@ void    print_u(t_arg *var, t_flags *fl)
         buff = ft_strjoin(str, buff);
     else
         buff = ft_strjoin(buff, str);
-    ft_putstr(buff);
+    return (buff);
 }

@@ -20,12 +20,10 @@
 
 typedef struct      s_arg
 {
-    char            *f_out;
     char            *buff;
     char            type;
     intmax_t        d;
     uintmax_t       u;
-    char            c;
     char            *str;
     int             width;
     short int       is_up;
@@ -40,22 +38,32 @@ typedef struct      s_flags
     short int       space;
     short int       negative;
     short int       prsn;
+    short int       dot;
     short int       format;
     short int       astr;
+    short int       hh;
+    short int       h;
+    short int       ll;
+    short int       l;
+    short int       j;
+    short int       z;
 }                   t_flags;
 
-void	foo(char *fmt, ...);
-void    print_str(t_arg *var, t_flags *flags);
-void    print_d(t_arg *var, t_flags *flags);
-void    print_u(t_arg *var, t_flags *flags);
-void    print_o(t_arg *var, t_flags *flags);
+
+
+int     ft_printf(char *fmt, ...);
+char    *print_str(t_arg *var, t_flags *flags);
+char    *print_d(t_arg *var, t_flags *flags);
+char    *print_u(t_arg *var, t_flags *flags);
+char    *print_o(t_arg *var, t_flags *flags);
 char    *print_x(t_arg *var, t_flags *flags);
+char    *print_c(t_arg *var, t_flags *fl);
 char    *to_upper(char *buff);
-void    undef_beh(t_flags *flags);
+void    undef_beh(t_flags *flags, char c);
 void    undef_beh_type(char *str);
-char    *set_precision(int width, int len, char *buff, t_flags *flags);
-char    *set_pad(int width, int len, char *buff, t_flags *flags);
-char    *ft_itoa_base(intmax_t nb, int base);
+char    *set_precision(int len, char *buff, t_flags *flags);
+char    *set_pad(int width, char *buff, t_flags *flags);
+char    *ft_itoa_base(uintmax_t nb, int base);
 
 
 #endif
