@@ -2,42 +2,42 @@
 
 int main()
 {
-	foo("%14X\n", 45);
-	printf("%14X\n", 45);
-	foo("%014X\n", 45);
-	printf("%014X\n", 45);
-	foo("%#14X\n", 45);
-	printf("%#14X\n", 45);
-	foo("%#014X\n", 45);
-	printf("%#014X\n", 45);
-	foo("%-14X\n", 45);
-	printf("%-14X\n", 45);
-	foo("%-#14X\n", 45);
-	printf("%-#14X\n\n", 45);
+	foo("%14lx\n", 45);
+	printf("%14lx\n", 45);
+	foo("%014lx\n", 45);
+	printf("%014lx\n", 45);
+	foo("%#14lx\n", 45);
+	printf("%#14lx\n", 45);
+	foo("%#014lx\n", 45);
+	printf("%#014lx\n", 45);
+	foo("%-14lx\n", 45);
+	printf("%-14lx\n", 45);
+	foo("%-#14lx\n", 45);
+	printf("%-#14lx\n\n", 45);
 
-	foo("%14X\n", -45);
-	printf("%14X\n", -45);
-	foo("%014X\n", -45);
-	printf("%014X\n", -45);
-	foo("%#14X\n", -45);
-	printf("%#14X\n", -45);
-	foo("%#014X\n", -45);
-	printf("%#014X\n", -45);
-	foo("%-14X\n", -45);
-	printf("%-14X\n", -45);
-	foo("%-#14X\n", -45);
-	printf("%-#14X\n\n", -45);
+	foo("%14lx\n", -45);
+	printf("%14lx\n", -45);
+	foo("%014lx\n", -45);
+	printf("%014lx\n", -45);
+	foo("%#14lx\n", -45);
+	printf("%#14lx\n", -45);
+	foo("%#014lx\n", -45);
+	printf("%#014lx\n", -45);
+	foo("%-14lx\n", -45);
+	printf("%-14lx\n", -45);
+	foo("%-#14lx\n", -45);
+	printf("%-#14lx\n\n", -45);
 
 
-	foo("%X\n", 45);
-	printf("%X\n", 45);
-    foo("%12.X\n", 45);
-	printf("%12.X\n", 45);
-	foo("%12.1X\n", -45);
-	printf("%12.1X\n", -45);
-	foo("%1.3X\n", 45);
-	printf("%1.3X\n", 45);
-	foo("%1.3X\n", -45);
-	printf("%1.3X\n", -45);
+	foo("%lx\n", 45);
+	printf("%lx\n", 45);
+    foo("%12.lx\n", 45);
+	printf("%12.lx\n", 45);
+	foo("%12.1lx\n", -45);
+	printf("%12.1lx\n", -45);
+	foo("%1.3lx\n", 45);
+	printf("%1.3lx\n", 45);
+	foo("%1.3lx\n", -45);
+	printf("%1.3lx\n", -45);
 	return (0);
 }

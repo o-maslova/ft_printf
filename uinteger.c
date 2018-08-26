@@ -54,30 +54,27 @@ char		*ft_uitoa(uintmax_t n)
 	return (str);
 }
 
-void    print_u(t_arg *var, t_flags *flags)
+void    print_u(t_arg *var, t_flags *fl)
 {
     char    *str;
     char    *buff;
     int     len;
     
-    if (flags->plus == 1 || flags->space == 1 || flags->hash ==  1)
+    str = ft_uitoa(var->u);
+    if (fl->plus == 1 || fl->space == 1 || fl->hash ==  1)
     {
-        undef_beh(flags);
+        undef_beh(fl, var->type);
         return ;
     }
-    str = ft_uitoa(var->u);
+    if (fl->prsn > 0)
+        str = set_precision(ft_strlen(str), str, fl);
     len = ft_strlen(str);
-    var->width = var->width > len ? var->width - len : len;
-    if (flags->minus != 1 || flags->prsn > len)
-    {
-        buff = (char *)malloc(sizeof(char) * (var->width) + 1);
-        if (flags->prsn > 0)
-            buff = set_precision(var->width, len, buff, flags);
-        else
-            buff = set_pad(var->width, len, buff, flags);
-        buff = ft_strjoin(buff, str);
-    }
+    var->width = var->width > len ? var->width - len : 0;
+    buff = (char *)malloc(sizeof(char) * (var->width + 1));
+    buff = set_pad(var->width, buff, fl);
+    if (fl->minus == 1)
+        buff = ft_strjoin(str, buff);
     else
-        buff = ft_strdup(str);
+        buff = ft_strjoin(buff, str);
     ft_putstr(buff);
 }

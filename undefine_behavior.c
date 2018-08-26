@@ -12,14 +12,32 @@
 
 #include "ft_printf.h"
 
-void    undef_beh(t_flags *flags)
+void    undef_beh(t_flags *flags, char c)
 {
+    char str[2];
+
+    str[0] = c;
+    str[1] = '\0';
     if (flags->plus == 1)
-        ft_putstr("flag '+' results in undefined behavior with 'u' conversion specifier\n");
+    {
+        ft_putstr("flag '+' results in undefined behavior with '");
+        ft_putstr(ft_strjoin(str, "' conversion specifier\n"));
+    }
     else if (flags->hash == 1)
-        ft_putstr("flag '#' results in undefined behavior with 'u' conversion specifier\n");
+    {
+        ft_putstr("flag '#' results in undefined behavior with '");
+        ft_putstr(ft_strjoin(str, "' conversion specifier\n"));
+    }
     else if (flags->space == 1)
-        ft_putstr("flag ' ' results in undefined behavior with 'u' conversion specifier\n");
+    {
+        ft_putstr("flag ' ' results in undefined behavior with '");
+        ft_putstr(ft_strjoin(str, "' conversion specifier\n"));
+    }
+    else if (flags->nul == 1)
+    {
+        ft_putstr("flag '0' results in undefined behavior with '");
+        ft_putstr(ft_strjoin(str, "' conversion specifier\n"));
+    }
    // exit (1);
 }
 
