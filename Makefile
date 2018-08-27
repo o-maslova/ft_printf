@@ -12,7 +12,7 @@
 
 NAME = libftprintf.a
 
-SRC = ./ft_printf.c ./integer.c ./uinteger.c ./string.c ./ft_itoa_base.c ./undefine_behavior.c
+SRC = ./ft_printf.c ./integer.c ./uinteger.c ./string.c ./ft_itoa_base.c ./undefine_behavior.c ./o_and_x.c
 
 FLAGS = -Wall -Wextra -Werror
 

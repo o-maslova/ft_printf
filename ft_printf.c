@@ -16,20 +16,20 @@ t_flags	*initialization(t_flags *flags)
 {
 	flags->minus = 0;
 	flags->plus = 0;
-    flags->hash = 0;
-    flags->nul = 0;
-    flags->space = 0;
-    flags->negative = 0;
-    flags->prsn = -1;
+	flags->hash = 0;
+	flags->nul = 0;
+	flags->space = 0;
+	flags->negative = 0;
+	flags->prsn = -1;
 	flags->dot = 0;
-    flags->format = 0;
-    flags->astr = 0;
+	flags->format = 0;
+	flags->astr = 0;
 	flags->hh = 0;
 	flags->h = 0;
 	flags->ll = 0;
 	flags->l = 0;
 	flags->j = 0;
- 	return (flags);
+	return (flags);
 }
 
 void	define_flag(char *str, t_flags *var, int lim)
@@ -44,10 +44,8 @@ void	define_flag(char *str, t_flags *var, int lim)
 		if (str[i] == '+')
 			var->plus = 1;
 		if (str[i] == '0')
-		{
 			if (str[i - 1] < '1' || str[i - 1] > '9')
 				var->nul = 1;
-		}
 		if (str[i] == '#')
 			var->hash = 1;
 		if (str[i] == ' ')
@@ -56,7 +54,7 @@ void	define_flag(char *str, t_flags *var, int lim)
 			var->astr = 1;
 		if (str[i] == '.')
 		{
-			var->dot = str[i + 1] == '*' ? 1 : 0;
+			var->dot = str[i + 1] == '*' ? 1 : -1;
 			var->prsn = ft_atoi(&str[++i]);
 		}
 	}
@@ -115,6 +113,7 @@ void	modificator_check(char *str, t_flags *fl)
 				fl->l = 1;
 		}
 		fl->j = str[i] == 'j' ? 1 : 0;
+		fl->z = str[i] == 'z' ? 1 : 0;
 		i++;
 	}
 }
@@ -128,19 +127,20 @@ int		define_operator(char *str, t_arg *var, t_flags *flags)
 	j = 0;
 	while (str[i] != 's' && str[i] != 'c' && str[i] != 'd' && str[i] != 'e'
 			&& str[i] != 'i' && str[i] != 'u' && str[i] != 'U' && str[i] != 'o'
-			&& str[i] != 'O'&& str[i] != 'x' && str[i] != 'X' && str[i] != 'p' && str[i] != '%')
+			&& str[i] != 'O' && str[i] != 'x' && str[i] != 'X' && str[i] != 'p'
+			&& str[i] != '%')
 		i++;
 	modificator_check(ft_strsub(str, 0, i), flags);
 	if (i > 0)
 	{
 		define_flag(str, flags, i);
-		while (str[j] == '#' || str[j] == '-' || str[j] == '+')
+		while (str[j] == '#' || str[j] == '-' || str[j] == '+' || str[j] == '0')
 			j++;
 		var->width = ft_atoi(&str[j]);
 		var->width = var->width < 0 ? -var->width : var->width;
 	}
 	if (str[i])
-		var->type = define_type(str[i]);
+		var->type = str[i];
 	return (++i);
 }
 
@@ -156,6 +156,10 @@ void	cast_d(t_arg *var, t_flags *fl)
 		var->d = (long)var->d;
 	else if (fl->z == 1)
 		var->d = (size_t)var->d;
+	else if (fl->j == 1)
+		var->d = var->d;
+	else
+		var->d = (int)var->d;
 }
 
 void	cast_o(t_arg *var, t_flags *fl)
@@ -170,6 +174,10 @@ void	cast_o(t_arg *var, t_flags *fl)
 		var->u = (unsigned long)var->u;
 	else if (fl->z == 1)
 		var->u = (size_t)var->u;
+	else if (fl->j == 1)
+		var->u = var->u;
+	else
+		var->u = (unsigned int)var->u;
 }
 
 int		output(va_list tmp, t_arg *var, t_flags *flags)
@@ -197,11 +205,14 @@ int		output(va_list tmp, t_arg *var, t_flags *flags)
 	if (var->type == 'd')
 	{
 		var->d = va_arg(tmp, intmax_t);
-		if (var->d < 0)
-			cast_o(var, flags);
-		else
-			cast_d(var, flags);
+		cast_d(var, flags);
+		if (flags->hh == 1)
+			var->d = (char)var->d;
+		if ((var->width == 0 || flags->minus == 1) && flags->nul == 1)
+			flags->nul = 0;
 		flags->negative = var->d < 0 ? 1 : 0;
+		if (flags->negative == 1 && -var->d < 0)
+			var->u = -var->d;
 		var->buff = print_d(var, flags);
 	}
 	if (var->type == 'S')
@@ -247,8 +258,8 @@ int		output(va_list tmp, t_arg *var, t_flags *flags)
 	if (var->type == 'U')
 	{
 		var->u = va_arg(tmp, uintmax_t);
-		flags->l = 1;
-		cast_o(var, flags);
+		// flags->l = 1;
+		// cast_o(var, flags);
 		var->buff = print_u(var, flags);
 	}
 	if (var->type == 'x')
@@ -273,7 +284,7 @@ int		output(va_list tmp, t_arg *var, t_flags *flags)
 		var->d = va_arg(tmp, int);
 		var->d = (char)var->d;
 		if (var->d == 0)
-			ret += 1;	
+			ret += 1;
 		var->buff = print_c(var, flags);
 	}
 	if (var->type == 'C')
@@ -287,11 +298,11 @@ int		output(va_list tmp, t_arg *var, t_flags *flags)
 
 int		ft_printf(char *fmt, ...)
 {
-	t_flags *flags;
-	t_arg *var;
-	va_list ap;
-	int i;
-	int ret;
+	t_flags		*flags;
+	t_arg		*var;
+	va_list		ap;
+	int			i;
+	int			ret;
 
 	i = 0;
 	ret = 0;
@@ -315,5 +326,5 @@ int		ft_printf(char *fmt, ...)
 		ret++;
 	}
 	va_end(ap);
-	return(ret);
+	return (ret);
 }

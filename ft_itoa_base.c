@@ -12,77 +12,78 @@
 
 #include "ft_printf.h"
 
-char        *to_upper(char *buff)
+char	*to_upper(char *buff)
 {
-    int i;
+	int i;
 
-    i = -1;
-    while (buff[++i] != '\0')
-        buff[i] = ft_toupper(buff[i]);
-    return (buff);
+	i = -1;
+	while (buff[++i] != '\0')
+		buff[i] = ft_toupper(buff[i]);
+	return (buff);
 }
 
-char        define_sym(int num)
+char	define_sym(int num)
 {
-    if (num == 10)
-        return ('a');
-    if (num == 11)
-        return ('b');
-    if (num == 12)
-        return ('c');
-    if (num == 13)
-        return ('d');
-    if (num == 14)
-        return ('e');
-    if (num == 15)
-        return ('f');
-    else
-        return (num + 48);
+	if (num == 10)
+		return ('a');
+	if (num == 11)
+		return ('b');
+	if (num == 12)
+		return ('c');
+	if (num == 13)
+		return ('d');
+	if (num == 14)
+		return ('e');
+	if (num == 15)
+		return ('f');
+	else
+		return (num + 48);
 }
 
-int         count_num(intmax_t nb, int base)
+int		count_num(intmax_t nb, int base)
 {
-    int i;
+	int i;
 
-    i = 1;
-    while (nb > base)
-    {
-        i++;
-        nb = nb / base;
-    }
-    return (i);
-}
-
-char        *rev_str(char *str)
-{
-    int i;
-    int j;
-    char tmp;
-
-    j = 0;
-    i = ft_strlen(str) - 1;
-    while (j < i + 1)
-    {
-        tmp = str[i];
-        str[i--] = str[j];
-        str[j++] = tmp;
-    }
-    return (str);
-}
-
-char        *ft_itoa_base(uintmax_t nb, int base)
-{
-    int i;
-    char *num;
- 
-    num = ft_memalloc(count_num(nb, base) + 1);
-	i = 0;
-    while (nb >= base)
-    {
-        num[i++] = define_sym(nb % base);
+	i = 1;
+	while (nb > base)
+	{
+		i++;
 		nb = nb / base;
-    }
-    num[i++] = define_sym(nb);
-    num = rev_str(num);
-    return (num);
+	}
+	return (i);
+}
+
+char	*rev_str(char *str)
+{
+	int i;
+	int j;
+	char tmp;
+
+	j = 0;
+	i = ft_strlen(str) - 1;
+	while (j < i + 1)
+	{
+		tmp = str[i];
+		str[i--] = str[j];
+		str[j++] = tmp;
+	}
+	// str[++j] = '\0';
+	return (str);
+}
+
+char	*ft_itoa_base(uintmax_t nb, int base)
+{
+	int i;
+	char *num;
+ 
+	num = ft_memalloc(count_num(nb, base) + 1);
+	i = 0;
+	while (nb >= (uintmax_t)base)
+	{
+		num[i++] = define_sym(nb % base);
+		nb = nb / base;
+	}
+	num[i++] = define_sym(nb);
+	num = rev_str(num);
+	return (num);
 }
