@@ -48,20 +48,17 @@ char	*print_u(t_arg *var, t_flags *fl)
 	int		len;
 
 	str = ft_uitoa(var->u);
-	// if (fl->plus == 1 || fl->space == 1 || fl->hash ==  1)
-	// {
-	//	 undef_beh(fl, var->type);
-	//	 return (NULL);
-	// }
 	if (fl->prsn > 0)
-	str = set_precision(ft_strlen(str), str, fl);
+		str = set_precision(ft_strlen(str), str, fl);
 	len = ft_strlen(str);
 	var->width = var->width > len ? var->width - len : 0;
 	buff = (char *)malloc(sizeof(char) * (var->width + 1));
 	buff = set_pad(var->width, buff, fl);
 	if (fl->minus == 1)
-	buff = ft_strjoin(str, buff);
+		var->buff = ft_strjoin(str, buff);
 	else
-	buff = ft_strjoin(buff, str);
-	return (buff);
+		var->buff = ft_strjoin(buff, str);
+	free(str);
+	free(buff);
+	return (var->buff);
 }

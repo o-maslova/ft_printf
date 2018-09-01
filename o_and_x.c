@@ -26,17 +26,18 @@ char	*print_o(t_arg *var, t_flags *fl)
 	{
 		c[0] = fl->hash == 1 ? '0' : ' ';
 		c[1] = '\0';
-		str = ft_strjoin(c, str);
+		var->str = ft_strjoin(c, str);
+		free(str);
+		str = var->str;
 	}
 	len = ft_strlen(str);
 	var->width = var->width > len ? var->width - len : 0;
 	buff = (char *)malloc(sizeof(char) * (var->width + 1));
 	buff = set_pad(var->width, buff, fl);
-	if (fl->minus == 1)
-		buff = ft_strjoin(str, buff);
-	else
-		buff = ft_strjoin(buff, str);
-	return (buff);
+	var->buff = fl->minus== 1 ? ft_strjoin(str, buff) : ft_strjoin(buff, str);
+	free(buff);
+	free(str);
+	return (var->buff);
 }
 
 char	*print_x(t_arg *var, t_flags *fl)
@@ -51,14 +52,17 @@ char	*print_x(t_arg *var, t_flags *fl)
 	if (fl->prsn >= 0)
 		str = set_precision(ft_strlen(str), str, fl);
 	if (fl->format == 1 && fl->nul != 1 && *str && *str != '0')
-		str = ft_strjoin("0x", str);
+	{
+		var->str = ft_strjoin("0x", str);
+		free(str);
+		str = var->str;
+	}
 	len = ft_strlen(str);
 	var->width = var->width > len ? var->width - len : 0;
 	buff = (char *)malloc(sizeof(char) * (var->width + 1));
 	buff = set_pad(var->width, buff, fl);
-	if (fl->minus == 1)
-		buff = ft_strjoin(str, buff);
-	else
-		buff = ft_strjoin(buff, str);
-	return (buff);
+	var->buff = fl->minus== 1 ? ft_strjoin(str, buff) : ft_strjoin(buff, str);
+	free(buff);
+	free(str);
+	return (var->buff);
 }

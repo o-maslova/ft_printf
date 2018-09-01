@@ -55,9 +55,9 @@ int		count_num(intmax_t nb, int base)
 
 char	*rev_str(char *str)
 {
-	int i;
-	int j;
-	char tmp;
+	int		i;
+	int		j;
+	char	tmp;
 
 	j = 0;
 	i = ft_strlen(str) - 1;
@@ -67,15 +67,14 @@ char	*rev_str(char *str)
 		str[i--] = str[j];
 		str[j++] = tmp;
 	}
-	// str[++j] = '\0';
 	return (str);
 }
 
 char	*ft_itoa_base(uintmax_t nb, int base)
 {
-	int i;
-	char *num;
- 
+	int		i;
+	char	*num;
+
 	num = ft_memalloc(count_num(nb, base) + 1);
 	i = 0;
 	while (nb >= (uintmax_t)base)

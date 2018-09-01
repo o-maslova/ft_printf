@@ -29,7 +29,7 @@ char		*ft_itoa(intmax_t nb)
 {
 	int			i;
 	int			j;
- 	intmax_t    num;
+	intmax_t	num;
 	char		*str;
 
 	j = 0;
@@ -38,13 +38,13 @@ char		*ft_itoa(intmax_t nb)
 	if (!(str = (char *)malloc(sizeof(char) * (i + 1))))
 		return (NULL);
 	i -= 1;
-    while (i--)
-        num = num * 10;
+	while (i--)
+		num = num * 10;
 	while (num > 0)
 	{
 		str[j++] = (nb / num) + 48;
 		nb = nb % num;
-        num /= 10;
+		num /= 10;
 	}
 	str[j] = '\0';
 	return (str);

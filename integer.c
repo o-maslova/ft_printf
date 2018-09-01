@@ -46,38 +46,53 @@ char	*set_precision(int len, char *str, t_flags *fl)
 	int		i;
 	int		tmp;
 	char	*buff;
+	char	*tmp2;
 
 	i = 0;
 	tmp = fl->prsn > len ? fl->prsn - len : 0;
+	buff = (char *)malloc(sizeof(char) * (tmp + 1));
 	if (tmp || len > 1)
 	{
-		buff = (char *)malloc(sizeof(char) * (tmp + 1));
 		while (i < tmp)
 			buff[i++] = '0';
 		buff[i] = '\0';
-		return (ft_strjoin(buff, str));
+		tmp2 = ft_strjoin(buff, str);
+		free(buff);
+		free(str);
+		return (tmp2);
 	}
-	return ("");
+	else
+		free(str);
+	return (buff);
 }
 
 char	*if_nul(t_flags *fl, char *str)
 {
-	char	c[2];
+	char	*new_str;
+	int		i;
+	int		j;
 
+	i = 1;
+	j = 0;
+	new_str = (char *)malloc(sizeof(char) * (ft_strlen(str) + 2));
 	if (fl->plus == 1)
-		c[0] = fl->negative == 1 ? '-' : '+';
+		new_str[0] = fl->negative == 1 ? '-' : '+';
 	else if (fl->space == 1 && fl->negative != 1)
-		c[0] = ' ';
+		new_str[0] = ' ';
 	else if (fl->negative == 1)
-		c[0] = '-';
-	c[1] = '\0';
-	return (ft_strjoin(c, str));
+		new_str[0] = '-';
+	while (str[j] != '\0')
+		new_str[i++] = str[j++];
+	new_str[i] = '\0';
+	free(str);
+	return (new_str);
 }
 
 char	*print_d(t_arg *var, t_flags *fl)
 {
 	char	*str;
 	char	*buff;
+	char	*tmp;
 	int		len;
 
 	if ((fl->dot == -1 || fl->dot == 1) && fl->prsn + 1 >= var->width)
@@ -95,9 +110,8 @@ char	*print_d(t_arg *var, t_flags *fl)
 	var->width = var->width > len ? var->width - len : 0;
 	buff = (char *)malloc(sizeof(char) * (var->width + 1));
 	buff = set_pad(var->width, buff, fl);
-	if (fl->minus == 1)
-		buff = ft_strjoin(str, buff);
-	else
-		buff = ft_strjoin(buff, str);
-	return (buff);
+	var->buff = (fl->minus== 1) ? ft_strjoin(str, buff) : ft_strjoin(buff, str);
+	free(buff);
+	free(str);
+	return (var->buff);
 }
