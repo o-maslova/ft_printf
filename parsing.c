@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-t_flags	*initialization(t_flags *flags)
+t_flags		*initialization(t_flags *flags)
 {
 	flags->minus = 0;
 	flags->plus = 0;
@@ -32,7 +32,7 @@ t_flags	*initialization(t_flags *flags)
 	return (flags);
 }
 
-void	define_flag(char *str, t_flags *var, int lim)
+void		define_flag(char *str, t_flags *var, int lim)
 {
 	int i;
 
@@ -60,6 +60,27 @@ void	define_flag(char *str, t_flags *var, int lim)
 	}
 }
 
+int			check(char *str, int lim)
+{
+	int i;
+
+	i = 0;
+	while (i < lim)
+	{
+		if ((str[i] >= '0' && str[i] <= '9') || str[i] == 'h' ||
+			str[i] == 'l' || str[i] == 'j' || str[i] == 'z' || str[i] == '#' ||
+			str[i] == '+' || str[i] == '-' || str[i] == '.' || str[i] == '*')
+			return (1);
+		if (str[i] == ' ' && str[i + 1] == '\0')
+			return (1);
+		else if (str[i] == ' ' && lim == 1)
+			return (1);
+		else
+			i++;
+	}
+	return (0);
+}
+
 void		modificator_check(char *str, t_flags *fl, int lim)
 {
 	int i;
@@ -85,7 +106,7 @@ void		modificator_check(char *str, t_flags *fl, int lim)
 	}
 }
 
-int		define_operator(char *str, t_arg *var, t_flags *flags)
+int			define_operator(char *str, t_arg *var, t_flags *flags)
 {
 	int		i;
 	int		j;
@@ -99,7 +120,7 @@ int		define_operator(char *str, t_arg *var, t_flags *flags)
 			&& str[i] != 'p' && str[i] != 'D' && str[i] != 'C' && str[i] != '%'
 			&& str[i] != '\n' && str[i] != '\0')
 		i++;
-	if (str[i] == '\n' || !str[i])
+	if ((!check(str, i) && i > 0 && str[i] != '%') || str[i] == '\n' || !str)
 		return (0);
 	tmp = ft_strsub(str, 0, i);
 	modificator_check(tmp, flags, i);
@@ -107,9 +128,7 @@ int		define_operator(char *str, t_arg *var, t_flags *flags)
 	while (str[j] == '#' || str[j] == '-' || str[j] == '+' || str[j] == '0')
 		j++;
 	var->width = ft_atoi(&str[j]);
-	var->width = var->width < 0 ? -var->width : var->width;
-	if (str[i])
-		var->type = str[i];
+	var->t = str[i] ? str[i] : 0;
 	free(tmp);
 	return (++i);
 }

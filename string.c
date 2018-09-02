@@ -43,7 +43,7 @@ char	*print_str(t_arg *var, t_flags *fl)
 char	*print_c(t_arg *var, t_flags *fl)
 {
 	int len;
-	
+
 	len = var->width == 0 ? 1 : var->width;
 	var->buff = (char *)malloc(sizeof(char) * (len + 1));
 	var->buff = set_pad(var->width - 1, var->buff, fl);

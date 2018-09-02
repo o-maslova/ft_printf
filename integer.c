@@ -110,7 +110,7 @@ char	*print_d(t_arg *var, t_flags *fl)
 	var->width = var->width > len ? var->width - len : 0;
 	buff = (char *)malloc(sizeof(char) * (var->width + 1));
 	buff = set_pad(var->width, buff, fl);
-	var->buff = (fl->minus== 1) ? ft_strjoin(str, buff) : ft_strjoin(buff, str);
+	var->buff = fl->minus == 1 ? ft_strjoin(str, buff) : ft_strjoin(buff, str);
 	free(buff);
 	free(str);
 	return (var->buff);
