@@ -12,43 +12,44 @@
 
 #include "ft_printf.h"
 
-void	print_unicode(t_arg *var)
+int		print_unicode(t_arg *var)
 {
+	int i;
+
+	i = 0;
 	if (var->d <= 0x7F)
-		var->buff[0] = (char)var->d;
+		var->buff[i++] = (char)var->d;
 	else if (var->d <= 0x7FF)
 	{
-		var->buff[0] = 0xC0 | (var->d >> 6);
-		var->buff[1] = 0x80 | (var->d & 0x3F);
-		var->buff[2] = '\0';
+		var->buff[i++] = 0xC0 | (var->d >> 6);
+		var->buff[i++] = 0x80 | (var->d & 0x3F);
 	}
 	else if (var->d <= 0xFFFF)
 	{
-		var->buff[0] = 0xE0 | (var->d >> 12);
-		var->buff[1] = 0x80 | ((var->d >> 6) & 0x3F);
-		var->buff[2] = 0x80 | (var->d & 0x3F);
-		var->buff[3] = '\0';
+		var->buff[i++] = 0xE0 | (var->d >> 12);
+		var->buff[i++] = 0x80 | ((var->d >> 6) & 0x3F);
+		var->buff[i++] = 0x80 | (var->d & 0x3F);
 	}
 	else if (var->d <= 0x10FFFF)
 	{
-		var->buff[0] = 0xF0 | (var->d >> 18);
-		var->buff[1] = 0x80 | ((var->d >> 12) & 0x3F);
-		var->buff[2] = 0x80 | ((var->d >> 6) & 0x3F);
-		var->buff[3] = 0x80 | (var->d & 0x3F);
-		var->buff[4] = '\0';
+		var->buff[i++] = 0xF0 | (var->d >> 18);
+		var->buff[i++] = 0x80 | ((var->d >> 12) & 0x3F);
+		var->buff[i++] = 0x80 | ((var->d >> 6) & 0x3F);
+		var->buff[i++] = 0x80 | (var->d & 0x3F);
 	}
+	var->buff[i] = '\0';
+	return (i);
 }
 
-void	print_uni_str(t_arg *var, int **ret)
+void	print_uni_str(t_arg *var, int *ret)
 {
 	while (*var->w_str)
 	{
 		var->d = *var->w_str;
-		print_unicode(var);
+		*ret += print_unicode(var);
 		ft_putstr(var->buff);
 		ft_bzero(var->buff, 5);
 		var->w_str++;
-		*ret += 1;
 		var->d = 0;
 	}
 }

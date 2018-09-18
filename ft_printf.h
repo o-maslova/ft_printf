@@ -16,6 +16,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <locale.h>
+# include <limits.h>
 # include "./libft/libft.h"
 
 typedef struct		s_arg
@@ -28,6 +29,7 @@ typedef struct		s_arg
 	wchar_t			*w_str;
 	int				width;
 	short int		is_up;
+	short int		ex;
 }					t_arg;
 
 typedef struct		s_flags
@@ -74,7 +76,7 @@ char				*set_precision(int len, char *buff, t_flags *flags);
 char				*set_pad(int width, char *buff, t_flags *flags);
 char				*ft_itoa_base(uintmax_t nb, int base);
 char				*ft_uitoa(uintmax_t n);
-void				print_unicode(t_arg *var);
-void				print_uni_str(t_arg *var, int **ret);
+int					print_unicode(t_arg *var);
+void				print_uni_str(t_arg *var, int *ret);
 
 #endif

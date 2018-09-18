@@ -92,7 +92,6 @@ char	*print_d(t_arg *var, t_flags *fl)
 {
 	char	*str;
 	char	*buff;
-	char	*tmp;
 	int		len;
 
 	if ((fl->dot == -1 || fl->dot == 1) && fl->prsn + 1 >= var->width)

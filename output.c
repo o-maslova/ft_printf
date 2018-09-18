@@ -75,8 +75,34 @@ void	output_x(va_list tmp, t_arg *var, t_flags *flags)
 	}
 }
 
+void	output_unicode(va_list tmp, t_arg *var, t_flags *flags, int *ret)
+{
+	if (var->t == 'C')
+	{
+		var->d = va_arg(tmp, wchar_t);
+		var->buff = (char *)malloc(sizeof(char) * 5);
+		if (!ft_isascii(var->d) && MB_CUR_MAX == 1)
+			return ;
+		*ret += print_unicode(var);
+		ft_putstr(var->buff);
+	}
+	if (var->t == 'S')
+	{
+		var->buff = (char *)malloc(sizeof(char) * 5);
+		var->w_str = va_arg(tmp, wchar_t *);
+		if (var->w_str == NULL)
+			ft_putstr("(null)");
+		else if (!ft_isascii(*var->w_str) && MB_CUR_MAX == 1)
+			return ;
+		else
+			print_uni_str(var, ret);
+	}
+}
+
 void	output_c(va_list tmp, t_arg *var, t_flags *flags, int *ret)
 {
+	if (var->t == 'C' || var->t == 'S')
+		output_unicode(tmp, var, flags, ret);
 	if (var->t == 'c')
 	{
 		var->d = va_arg(tmp, int);
@@ -88,18 +114,5 @@ void	output_c(va_list tmp, t_arg *var, t_flags *flags, int *ret)
 		ft_putstr(var->buff);
 		if (var->d == 0)
 			ft_putchar(var->d);
-	}
-	if (var->t == 'C')
-	{
-		var->buff = (char *)malloc(sizeof(char) * 5);
-		var->d = va_arg(tmp, wchar_t);
-		print_unicode(var);
-		ft_putstr(var->buff);
-	}
-	if (var->t == 'S')
-	{
-		var->buff = (char *)malloc(sizeof(char) * 5);
-		var->w_str = va_arg(tmp, wchar_t *);
-		print_uni_str(var, &ret);
 	}
 }

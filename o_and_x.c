@@ -22,7 +22,7 @@ char	*print_o(t_arg *var, t_flags *fl)
 	str = ft_itoa_base(var->u, 8);
 	if (fl->prsn >= 0)
 		str = set_precision(ft_strlen(str), str, fl);
-	if (fl->nul != 1 && (fl->hash == 1 || fl->space == 1))
+	if (fl->nul != 1 && *str != '0' && (fl->hash == 1 || fl->space == 1))
 	{
 		c[0] = fl->hash == 1 ? '0' : ' ';
 		c[1] = '\0';

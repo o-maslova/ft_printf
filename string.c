@@ -15,7 +15,6 @@
 char	*print_str(t_arg *var, t_flags *fl)
 {
 	char	*buff;
-	char	*tmp;
 	int		len;
 
 	len = var->str ? ft_strlen(var->str) : 0;

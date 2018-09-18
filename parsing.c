@@ -123,6 +123,8 @@ int			define_operator(char *str, t_arg *var, t_flags *flags)
 	if ((!check(str, i) && i > 0 && str[i] != '%') || str[i] == '\n' || !str)
 		return (0);
 	tmp = ft_strsub(str, 0, i);
+	if (*tmp == '\0' && *str == '\0')
+		return (0);
 	modificator_check(tmp, flags, i);
 	define_flag(str, flags, i);
 	while (str[j] == '#' || str[j] == '-' || str[j] == '+' || str[j] == '0')
