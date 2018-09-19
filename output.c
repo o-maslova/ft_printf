@@ -91,7 +91,10 @@ void	output_unicode(va_list tmp, t_arg *var, t_flags *flags, int *ret)
 		var->buff = (char *)malloc(sizeof(char) * 5);
 		var->w_str = va_arg(tmp, wchar_t *);
 		if (var->w_str == NULL)
+		{
 			ft_putstr("(null)");
+			*ret += 6;
+		}
 		else if (!ft_isascii(*var->w_str) && MB_CUR_MAX == 1)
 			return ;
 		else

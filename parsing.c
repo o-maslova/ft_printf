@@ -62,22 +62,27 @@ void		define_flag(char *str, t_flags *var, int lim)
 
 int			check(char *str, int lim)
 {
-	int i;
+	int check;
+	int j;
 
-	i = 0;
-	while (i < lim)
+	check = 0;
+	j = 0;
+	while (j < lim)
 	{
-		if ((str[i] >= '0' && str[i] <= '9') || str[i] == 'h' ||
-			str[i] == 'l' || str[i] == 'j' || str[i] == 'z' || str[i] == '#' ||
-			str[i] == '+' || str[i] == '-' || str[i] == '.' || str[i] == '*')
+		if ((str[j] >= '0' && str[j] <= '9') || str[j] == 'h' ||
+			str[j] == 'l' || str[j] == 'j' || str[j] == 'z' || str[j] == '#' ||
+			str[j] == '+' || str[j] == '-' || str[j] == '.' || str[j] == '*')
 			return (1);
-		if (str[i] == ' ' && str[i + 1] == '\0')
+		if (str[j] == ' ' && str[j + 1] == '\0')
 			return (1);
-		else if (str[i] == ' ' && lim == 1)
+		else if (str[j] == ' ' && lim == 1)
 			return (1);
-		else
-			i++;
+		if (str[j] == ' ')
+			check++;
+		j++;
 	}
+	if (check == lim)
+		return (1);
 	return (0);
 }
 
