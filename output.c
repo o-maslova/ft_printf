@@ -81,8 +81,6 @@ void	output_unicode(va_list tmp, t_arg *var, t_flags *flags, int *ret)
 	{
 		var->d = va_arg(tmp, wchar_t);
 		var->buff = (char *)malloc(sizeof(char) * 5);
-		if (!ft_isascii(var->d) && MB_CUR_MAX == 1)
-			return ;
 		*ret += print_unicode(var);
 		ft_putstr(var->buff);
 	}
@@ -95,8 +93,6 @@ void	output_unicode(va_list tmp, t_arg *var, t_flags *flags, int *ret)
 			ft_putstr("(null)");
 			*ret += 6;
 		}
-		else if (!ft_isascii(*var->w_str) && MB_CUR_MAX == 1)
-			return ;
 		else
 			print_uni_str(var, ret);
 	}

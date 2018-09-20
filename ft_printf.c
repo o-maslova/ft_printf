@@ -65,20 +65,6 @@ int		output(va_list tmp, t_arg *var, t_flags *flags)
 	return (ret);
 }
 
-int		continue_check(t_arg *var, char *str, int ret)
-{
-	if (MB_CUR_MAX == 1 && var->w_str)
-	{
-		if (var->t == 'C' && !ft_isascii(var->d))
-			return (-1);
-		if (var->t == 'S' && !ft_isascii(*var->w_str))
-			return (-1);
-		if (ft_strchr(str, 'C') || ft_strchr(str, 'S'))
-			return (-1);
-	}
-	return (ret);
-}
-
 int		symbol_check(char *str, t_flags *fl, t_arg *var, va_list ap)
 {
 	int			i;
@@ -99,7 +85,6 @@ int		symbol_check(char *str, t_flags *fl, t_arg *var, va_list ap)
 				str++;
 			str = str + i;
 		}
-		ret = continue_check(var, str, ret);
 		if (*str == '\0' || ret == -1)
 			break ;
 		ft_putchar(*str++);
