@@ -41,15 +41,17 @@ int		print_unicode(t_arg *var)
 	return (i);
 }
 
-void	print_uni_str(t_arg *var, int *ret)
+void	print_uni_str(t_arg *var, int *ret, int prsn)
 {
 	while (*var->w_str)
 	{
 		var->d = *var->w_str;
-		*ret += print_unicode(var);
+		if (prsn == -1 || (*ret < prsn))
+			*ret += print_unicode(var);
 		ft_putstr(var->buff);
 		ft_bzero(var->buff, 5);
 		var->w_str++;
 		var->d = 0;
+		
 	}
 }

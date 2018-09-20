@@ -57,7 +57,7 @@ void				output_d(va_list tmp, t_arg *var, t_flags *flags);
 void				output_o_and_u(va_list tmp, t_arg *var, t_flags *flags);
 void				output_x(va_list tmp, t_arg *var, t_flags *flags);
 void				output_c(va_list tmp, t_arg *var, t_flags *flags, int *ret);
-t_flags				*initialization(t_flags *flags);
+void				initialization(t_flags *flags, t_arg *var);
 void				define_flag(char *str, t_flags *var, int lim);
 void				cast_d(t_arg *var, t_flags *fl);
 void				cast_o(t_arg *var, t_flags *fl);
@@ -77,6 +77,7 @@ char				*set_pad(int width, char *buff, t_flags *flags);
 char				*ft_itoa_base(uintmax_t nb, int base);
 char				*ft_uitoa(uintmax_t n);
 int					print_unicode(t_arg *var);
-void				print_uni_str(t_arg *var, int *ret);
+void				print_uni_str(t_arg *var, int *ret, int prsn);
+int					check(char *str, int lim);
 
 #endif

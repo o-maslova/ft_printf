@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-t_flags		*initialization(t_flags *flags)
+void		initialization(t_flags *flags, t_arg *var)
 {
 	flags->minus = 0;
 	flags->plus = 0;
@@ -29,7 +29,8 @@ t_flags		*initialization(t_flags *flags)
 	flags->ll = 0;
 	flags->l = 0;
 	flags->j = 0;
-	return (flags);
+	var->buff = NULL;
+	var->str = NULL;
 }
 
 void		define_flag(char *str, t_flags *var, int lim)
@@ -119,13 +120,10 @@ int			define_operator(char *str, t_arg *var, t_flags *flags)
 
 	i = 0;
 	j = 0;
-	while (str[i] != 's' && str[i] != 'c' && str[i] != 'd' && str[i] != 'e'
-			&& str[i] != 'i' && str[i] != 'u' && str[i] != 'U' && str[i] != 'o'
-			&& str[i] != 'O' && str[i] != 'x' && str[i] != 'X' && str[i] != 'S'
-			&& str[i] != 'p' && str[i] != 'D' && str[i] != 'C' && str[i] != '%'
-			&& str[i] != '\n' && str[i] != '\0')
-		i++;
-	if ((!check(str, i) && i > 0 && str[i] != '%') || str[i] == '\n' || !str)
+	while ((!ft_isalpha(str[i]) || str[i] == 'h' || str[i] == 'l' ||
+			str[i] == 'j' || str[i] == 'z') && str[i] != '\0' && str[i] != '%')
+			i++;
+	if ((!check(str, i) && i > 0 && str[i] != '%') || !str)
 		return (0);
 	tmp = ft_strsub(str, 0, i);
 	if (*tmp == '\0' && *str == '\0')

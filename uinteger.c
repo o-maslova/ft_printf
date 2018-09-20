@@ -56,6 +56,8 @@ char	*print_u(t_arg *var, t_flags *fl)
 	buff = set_pad(var->width, buff, fl);
 	if (fl->minus == 1)
 		var->buff = ft_strjoin(str, buff);
+	else if (*str == '0')
+		var->buff = buff;
 	else
 		var->buff = ft_strjoin(buff, str);
 	free(str);

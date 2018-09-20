@@ -19,7 +19,7 @@ char	*set_pad(int width, char *buff, t_flags *fl)
 	i = 0;
 	while (i < width)
 	{
-		if (fl->dot == -1 || fl->dot == 1)
+		if ((fl->dot == -1 || fl->dot == 1) && *buff != '0')
 			fl->nul = 0;
 		if (fl->nul == 1 && fl->minus != 1)
 		{
@@ -27,7 +27,8 @@ char	*set_pad(int width, char *buff, t_flags *fl)
 				buff[i++] = fl->negative == 1 ? '-' : '+';
 			else if (fl->space == 1 && i == 0)
 				buff[i++] = ' ';
-			buff[i++] = '0';
+			else
+				buff[i++] = '0';
 		}
 		else
 			buff[i++] = ' ';
@@ -98,7 +99,7 @@ char	*print_d(t_arg *var, t_flags *fl)
 		fl->nul = 0;
 	var->d = fl->negative == 1 ? -var->d : var->d;
 	if (fl->negative == 1 && var->d < 0)
-		str = ft_uitoa(var->u);
+		str = ft_uitoa(var->d);
 	else
 		str = ft_itoa(var->d);
 	if (fl->prsn >= 0)

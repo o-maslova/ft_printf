@@ -39,21 +39,56 @@ void	ouput_s_and_p(va_list tmp, t_arg *var, t_flags *flags)
 		flags->prsn = va_arg(tmp, unsigned int);
 }
 
-int		output(va_list tmp, t_arg *var, t_flags *flags)
+void	invalid(t_arg *var, t_flags *fl, char *str)
+{
+	char	*ptr;
+	char	*buff;
+	int		len;
+	int		i;
+	int		lim;
+
+	// i = check(str, ft_strlen(str));
+	// while (str)
+	var->str = ft_strnew(2);
+	var->str[0] = var->t;
+	var->str[1] = '\0';
+	if ((fl->dot == -1 || fl->dot == 1) && fl->prsn + 1 >= var->width)
+		fl->nul = 0;
+	// if (fl->prsn >= 0)
+	// 	var->str = set_precision(ft_strlen(var->str), var->str, fl);
+	// if (fl->nul != 1 && (fl->plus == 1 || fl->space == 1))
+	// 	str = if_nul(fl, str);
+	// len = ft_strlen(var->str);
+	var->width = var->width > 1 ? var->width - 1 : 0;
+	buff = (char *)malloc(sizeof(char) * (var->width + 1));
+	buff = set_pad(var->width, buff, fl);
+	// printf("buff = %s\n", buff);
+	// printf("var->str = %s\n", var->str);
+	if (fl->minus == 1)
+		var->buff = ft_strjoin(var->str, buff);
+	else
+		var->buff = ft_strjoin(buff, var->str);
+	free(buff);
+	free(var->str);
+}
+
+int		output(va_list tmp, t_arg *var, t_flags *flags, char *str)
 {
 	int ret;
 
 	ret = 0;
 	if (!var->t)
 		return (0);
-	if (var->t == 's' || var->t == 'p' || var->t == '%')
+	else if (var->t == 's' || var->t == 'p' || var->t == '%')
 		ouput_s_and_p(tmp, var, flags);
-	if (var->t == 'd' || var->t == 'D' || var->t == 'i')
+	else if (var->t == 'd' || var->t == 'D' || var->t == 'i')
 		output_d(tmp, var, flags);
-	if (var->t == 'x' || var->t == 'X')
+	else if (var->t == 'x' || var->t == 'X')
 		output_x(tmp, var, flags);
-	if (var->t == 'u' || var->t == 'U' || var->t == 'o' || var->t == 'O')
+	else if (var->t == 'u' || var->t == 'U' || var->t == 'o' || var->t == 'O')
 		output_o_and_u(tmp, var, flags);
+	else if (var->t != 'c' && var->t != 'C' && var->t != 'S' && var->width > 0)
+		invalid(var, flags, str);
 	if (var->t == 'c' || var->t == 'C' || var->t == 'S')
 		output_c(tmp, var, flags, &ret);
 	else
@@ -61,7 +96,8 @@ int		output(va_list tmp, t_arg *var, t_flags *flags)
 		ret += ft_strlen(var->buff);
 		ft_putstr(var->buff);
 	}
-	free(var->buff);
+	ft_bzero(var->buff, ft_strlen(var->buff));
+	// free(var->buff);
 	return (ret);
 }
 
@@ -77,19 +113,23 @@ int		symbol_check(char *str, t_flags *fl, t_arg *var, va_list ap)
 		while (*str == '%')
 		{
 			++str;
-			fl = initialization(fl);
+			initialization(fl, var);
 			var->width = 0;
 			if ((i = define_operator(str, var, fl)))
-				ret += output(ap, var, fl);
+				ret += output(ap, var, fl, str);
 			else if (*str == ' ')
 				str++;
 			str = str + i;
+			// ft_bzero(var->buff, ft_strlen(var->buff));
 		}
-		if (*str == '\0' || ret == -1)
+		if (*str == '\0')
 			break ;
+		// if (*var->buff == '\0')
+		// 	free(var->buff);
 		ft_putchar(*str++);
 		ret++;
 	}
+	var->buff = !var->buff ? ft_memalloc(1) : var->buff;
 	return (ret);
 }
 

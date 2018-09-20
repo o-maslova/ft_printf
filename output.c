@@ -86,9 +86,8 @@ void	out_uni_s(va_list tmp, t_arg *var, t_flags *flags, int *ret)
 		*ret = flags->prsn > 0 ? *ret + flags->prsn : *ret + 6;
 	}
 	else
-		print_uni_str(var, ret);
-	if (!var->w_str)
-		ft_putstr(var->buff);
+		print_uni_str(var, ret, flags->prsn);
+	ft_putstr(var->buff);
 }
 
 void	output_c(va_list tmp, t_arg *var, t_flags *flags, int *ret)

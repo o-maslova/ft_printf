@@ -14,9 +14,9 @@
 
 void	cast_d(t_arg *var, t_flags *fl)
 {
-	if (fl->hh == 1)
+	if (fl->hh == 1 && var->t != 'D')
 		var->d = (char)var->d;
-	else if (fl->h == 1)
+	else if (fl->h == 1 && var->t != 'D')
 		var->d = (short)var->d;
 	else if (fl->ll == 1)
 		var->d = (long long)var->d;
@@ -32,9 +32,9 @@ void	cast_d(t_arg *var, t_flags *fl)
 
 void	cast_o(t_arg *var, t_flags *fl)
 {
-	if (fl->hh == 1)
+	if (fl->hh == 1 && var->t != 'O')
 		var->u = (unsigned char)var->u;
-	else if (fl->h == 1)
+	else if (fl->h == 1 && var->t != 'O')
 		var->u = (unsigned short)var->u;
 	else if (fl->ll == 1)
 		var->u = (unsigned long long)var->u;
