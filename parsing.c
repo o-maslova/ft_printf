@@ -70,9 +70,10 @@ int			check(char *str, int lim)
 	j = 0;
 	while (j < lim)
 	{
-		if ((str[j] >= '0' && str[j] <= '9') || str[j] == 'h' ||
-			str[j] == 'l' || str[j] == 'j' || str[j] == 'z' || str[j] == '#' ||
-			str[j] == '+' || str[j] == '-' || str[j] == '.' || str[j] == '*')
+		if (ft_strchr("0123456789hljz#+-.*", str[j]))
+		// if ((str[j] >= '0' && str[j] <= '9') || str[j] == 'h' ||
+		// 	str[j] == 'l' || str[j] == 'j' || str[j] == 'z' || str[j] == '#' ||
+		// 	str[j] == '+' || str[j] == '-' || str[j] == '.' || str[j] == '*')
 			return (1);
 		if (str[j] == ' ' && str[j + 1] == '\0')
 			return (1);
@@ -120,10 +121,15 @@ int			define_operator(char *str, t_arg *var, t_flags *flags)
 
 	i = 0;
 	j = 0;
+	// while (str[i] != 's' && str[i] != 'c' && str[i] != 'd' && str[i] != 'e'
+	// 		&& str[i] != 'i' && str[i] != 'u' && str[i] != 'U' && str[i] != 'o'
+	// 		&& str[i] != 'O' && str[i] != 'x' && str[i] != 'X' && str[i] != 'S'
+	// 		&& str[i] != 'p' && str[i] != 'D' && str[i] != 'C' && str[i] != '%'
+	// 		&& str[i] != '\n' && str[i] != '\0')
 	while ((!ft_isalpha(str[i]) || str[i] == 'h' || str[i] == 'l' ||
 			str[i] == 'j' || str[i] == 'z') && str[i] != '\0' && str[i] != '%')
 			i++;
-	if ((!check(str, i) && i > 0 && str[i] != '%') || !str)
+	if ((i > 0 && str[i] != '%' && !check(str, i)) || !str)
 		return (0);
 	tmp = ft_strsub(str, 0, i);
 	if (*tmp == '\0' && *str == '\0')
@@ -134,6 +140,12 @@ int			define_operator(char *str, t_arg *var, t_flags *flags)
 		j++;
 	var->width = ft_atoi(&str[j]);
 	var->t = str[i] ? str[i] : 0;
+	if (!ft_strchr("sSpdDioOuUxXcC%", var->t))
+	{
+		var->str = ft_strdup(&str[i]);
+		i = ft_strlen(var->str) + 1;
+		// return (i);
+	}
 	free(tmp);
 	return (++i);
 }

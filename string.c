@@ -17,10 +17,10 @@ char	*print_str(t_arg *var, t_flags *fl)
 	char	*buff;
 	int		len;
 
-	len = var->str ? ft_strlen(var->str) : 0;
 	if (!var->str)
-		var->buff = ft_strdup("(null)");
-	else if ((fl->prsn >= 0 && fl->prsn < len) || var->width > 0)
+		var->str = ft_strdup("(null)");
+	len = var->str ? ft_strlen(var->str) : 0;
+	if ((fl->prsn >= 0 && fl->prsn < len) || var->width > 0)
 	{
 		var->str = ft_strsub(var->str, 0, fl->prsn);
 		len = ft_strlen(var->str);
@@ -34,7 +34,7 @@ char	*print_str(t_arg *var, t_flags *fl)
 		free(var->str);
 		free(buff);
 	}
-	else
+	else if (var->str)
 		var->buff = ft_strdup(var->str);
 	return (var->buff);
 }

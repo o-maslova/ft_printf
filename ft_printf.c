@@ -41,29 +41,16 @@ void	ouput_s_and_p(va_list tmp, t_arg *var, t_flags *flags)
 
 void	invalid(t_arg *var, t_flags *fl, char *str)
 {
-	char	*ptr;
 	char	*buff;
-	int		len;
-	int		i;
-	int		lim;
 
-	// i = check(str, ft_strlen(str));
-	// while (str)
-	var->str = ft_strnew(2);
-	var->str[0] = var->t;
-	var->str[1] = '\0';
+	// var->str = ft_strnew(2);
+	// var->str[0] = var->t;
+	// var->str[1] = '\0';
 	if ((fl->dot == -1 || fl->dot == 1) && fl->prsn + 1 >= var->width)
 		fl->nul = 0;
-	// if (fl->prsn >= 0)
-	// 	var->str = set_precision(ft_strlen(var->str), var->str, fl);
-	// if (fl->nul != 1 && (fl->plus == 1 || fl->space == 1))
-	// 	str = if_nul(fl, str);
-	// len = ft_strlen(var->str);
 	var->width = var->width > 1 ? var->width - 1 : 0;
 	buff = (char *)malloc(sizeof(char) * (var->width + 1));
 	buff = set_pad(var->width, buff, fl);
-	// printf("buff = %s\n", buff);
-	// printf("var->str = %s\n", var->str);
 	if (fl->minus == 1)
 		var->buff = ft_strjoin(var->str, buff);
 	else
@@ -79,7 +66,11 @@ int		output(va_list tmp, t_arg *var, t_flags *flags, char *str)
 	ret = 0;
 	if (!var->t)
 		return (0);
-	else if (var->t == 's' || var->t == 'p' || var->t == '%')
+	if (flags->astr == 1)
+		var->width = va_arg(tmp, int);
+	if (flags->astr == 1 && flags->dot == 1)
+		flags->prsn = va_arg(tmp, int);
+	if (var->t == 's' || var->t == 'p' || var->t == '%')
 		ouput_s_and_p(tmp, var, flags);
 	else if (var->t == 'd' || var->t == 'D' || var->t == 'i')
 		output_d(tmp, var, flags);
@@ -87,48 +78,53 @@ int		output(va_list tmp, t_arg *var, t_flags *flags, char *str)
 		output_x(tmp, var, flags);
 	else if (var->t == 'u' || var->t == 'U' || var->t == 'o' || var->t == 'O')
 		output_o_and_u(tmp, var, flags);
-	else if (var->t != 'c' && var->t != 'C' && var->t != 'S' && var->width > 0)
+	else if (var->t != 'c' && var->t != 'C' && var->t != 'S')
 		invalid(var, flags, str);
 	if (var->t == 'c' || var->t == 'C' || var->t == 'S')
-		output_c(tmp, var, flags, &ret);
-	else
-	{
-		ret += ft_strlen(var->buff);
-		ft_putstr(var->buff);
-	}
+		return (output_c(tmp, var, flags, ret));
+	ret += ft_strlen(var->buff);
+	ft_putstr(var->buff);
 	ft_bzero(var->buff, ft_strlen(var->buff));
 	// free(var->buff);
-	return (ret);
+	return (ret);// = var->ex == 1 ? -1 : ret));
 }
 
 int		symbol_check(char *str, t_flags *fl, t_arg *var, va_list ap)
 {
 	int			i;
+	int 		j;
 	int			ret;
 
 	i = 0;
+	j = 0;
 	ret = 0;
 	while (*str)
 	{
+		if (var->ex && ft_strchr(str, 'S') && !ft_strchr(str, NULL))
+				ret = -2;
 		while (*str == '%')
 		{
 			++str;
 			initialization(fl, var);
-			var->width = 0;
 			if ((i = define_operator(str, var, fl)))
-				ret += output(ap, var, fl, str);
-			else if (*str == ' ')
-				str++;
+				ret = ((j = output(ap, var, fl, str)) >= 0) ? ret + j : j;
+			// printf("\nj = %d\n", j);
+				// ret += output(ap, var, fl, str);
 			str = str + i;
+			// if (*str == ' ' && ret < 0)
+			// 	str++;
+			// ret = MB_CUR_MAX == 1 ? -1 : ret;
 			// ft_bzero(var->buff, ft_strlen(var->buff));
+			// free(var->buff);
 		}
-		if (*str == '\0')
+		if (!*str || *str == '\0' || ret == -2)//(var->ex && !ft_strchr(str, 'C')))// && (ft_strchr(str, 'S') || ft_strchr(str, 'C'))))
 			break ;
 		// if (*var->buff == '\0')
 		// 	free(var->buff);
 		ft_putchar(*str++);
-		ret++;
+		ret = ret < 0 ? -1 : ret + 1;
 	}
+	ret = var->ex ? -1 : ret;
 	var->buff = !var->buff ? ft_memalloc(1) : var->buff;
 	return (ret);
 }
@@ -138,12 +134,17 @@ int		ft_printf(char *str, ...)
 	t_flags		*flags;
 	t_arg		*var;
 	va_list		ap;
+	static int	ex;
 	int			ret;
 
 	va_start(ap, str);
 	flags = (t_flags *)malloc(sizeof(t_flags));
 	var = (t_arg *)malloc(sizeof(t_arg));
-	ret = symbol_check(str, flags, var, ap);
+	if (ft_strchr(str, 'S') && MB_CUR_MAX == 1)
+		ex = 1;
+	var->ex = ex;
+	var->tmp = ft_strdup(str);
+	ret = symbol_check(var->tmp, flags, var, ap);
 	free(var);
 	free(flags);
 	va_end(ap);
