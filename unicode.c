@@ -41,12 +41,21 @@ int		print_unicode(t_arg *var)
 	return (i);
 }
 
-int		print_uni_str(t_arg *var, int ret, int prsn)
+int		print_uni_str(t_arg *var, int ret, int prsn, int *ex)
 {
+	int check;
+	int i;
+
+	i = 0;
+	check = -1;
 	while (*var->w_str)
 	{
 		var->d = *var->w_str;
-		if (prsn == -1 || (ret < prsn))
+		while (MB_CUR_MAX == 1 && var->w_str[i] && check <= 0)
+			check = var->w_str[i++] <= 255 ? 0 : i;
+		if (prsn == -1 && check > 0)
+			return (-1);
+		if (prsn == -1 || ret < prsn)
 			ret += print_unicode(var);
 		ft_putstr(var->buff);
 		ft_bzero(var->buff, 5);

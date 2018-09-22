@@ -19,8 +19,8 @@ char	*set_pad(int width, char *buff, t_flags *fl)
 	i = 0;
 	while (i < width)
 	{
-		if ((fl->dot == -1 || fl->dot == 1) && *buff != '0')
-			fl->nul = 0;
+		// if ((fl->dot == -1 || fl->dot == 1) && *buff != '0')
+		// 	fl->nul = 0;
 		if (fl->nul == 1 && fl->minus != 1)
 		{
 			if ((fl->plus == 1 || fl->negative == 1) && i == 0)
@@ -102,12 +102,14 @@ char	*print_d(t_arg *var, t_flags *fl)
 		str = ft_uitoa(var->d);
 	else
 		str = ft_itoa(var->d);
-	if (fl->prsn >= 0)
-		str = set_precision(ft_strlen(str), str, fl);
+	str = fl->prsn >= 0 ? set_precision(ft_strlen(str), str, fl) : str;
 	if (fl->nul != 1 && (fl->negative == 1 || fl->plus == 1 || fl->space == 1))
 		str = if_nul(fl, str);
 	len = ft_strlen(str);
-	var->width = var->width > len ? var->width - len : 0;
+	if (var->width < len  && var->width != 0 && fl->plus == 1)
+		var->width = 1;
+	else
+		var->width = var->width > len ? var->width - len : 0;
 	buff = (char *)malloc(sizeof(char) * (var->width + 1));
 	buff = set_pad(var->width, buff, fl);
 	var->buff = fl->minus == 1 ? ft_strjoin(str, buff) : ft_strjoin(buff, str);

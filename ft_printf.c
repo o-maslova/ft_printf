@@ -39,13 +39,21 @@ void	ouput_s_and_p(va_list tmp, t_arg *var, t_flags *flags)
 		flags->prsn = va_arg(tmp, unsigned int);
 }
 
-void	invalid(t_arg *var, t_flags *fl, char *str)
+void	invalid(t_arg *var, t_flags *fl)
 {
 	char	*buff;
+	char	*ptr;
 
 	// var->str = ft_strnew(2);
 	// var->str[0] = var->t;
 	// var->str[1] = '\0';
+	if ((ptr = ft_strchr(var->str, '}')) || (ptr = ft_strchr(var->str, '\n')))
+	{
+		buff = ft_strsub(var->str, 0, ptr - var->str);
+		free(var->str);
+		var->str = ft_strdup(buff);
+		free(buff);
+	}
 	if ((fl->dot == -1 || fl->dot == 1) && fl->prsn + 1 >= var->width)
 		fl->nul = 0;
 	var->width = var->width > 1 ? var->width - 1 : 0;
@@ -59,17 +67,22 @@ void	invalid(t_arg *var, t_flags *fl, char *str)
 	free(var->str);
 }
 
-int		output(va_list tmp, t_arg *var, t_flags *flags, char *str)
+int		output(va_list tmp, t_arg *var, t_flags *flags, char *str, int *ex)
 {
 	int ret;
 
 	ret = 0;
 	if (!var->t)
 		return (0);
-	if (flags->astr == 1)
-		var->width = va_arg(tmp, int);
+	if (flags->astr != 0)
+	{
+		var->tmp_w = va_arg(tmp, int);
+		var->width = flags->astr > 0 ? var->tmp_w : var->width;
+		flags->minus = var->width < 0 ? 1 : 0;
+	}
 	if (flags->astr == 1 && flags->dot == 1)
 		flags->prsn = va_arg(tmp, int);
+	var->width = var->width < 0 ? -var->width : var->width;
 	if (var->t == 's' || var->t == 'p' || var->t == '%')
 		ouput_s_and_p(tmp, var, flags);
 	else if (var->t == 'd' || var->t == 'D' || var->t == 'i')
@@ -79,9 +92,9 @@ int		output(va_list tmp, t_arg *var, t_flags *flags, char *str)
 	else if (var->t == 'u' || var->t == 'U' || var->t == 'o' || var->t == 'O')
 		output_o_and_u(tmp, var, flags);
 	else if (var->t != 'c' && var->t != 'C' && var->t != 'S')
-		invalid(var, flags, str);
+		invalid(var, flags);
 	if (var->t == 'c' || var->t == 'C' || var->t == 'S')
-		return (output_c(tmp, var, flags, ret));
+		return (output_c(tmp, var, flags, ret, ex));
 	ret += ft_strlen(var->buff);
 	ft_putstr(var->buff);
 	ft_bzero(var->buff, ft_strlen(var->buff));
@@ -89,7 +102,7 @@ int		output(va_list tmp, t_arg *var, t_flags *flags, char *str)
 	return (ret);// = var->ex == 1 ? -1 : ret));
 }
 
-int		symbol_check(char *str, t_flags *fl, t_arg *var, va_list ap)
+int		symbol_check(char *str, t_flags *fl, t_arg *var, va_list ap, int *ex)
 {
 	int			i;
 	int 		j;
@@ -107,7 +120,7 @@ int		symbol_check(char *str, t_flags *fl, t_arg *var, va_list ap)
 			++str;
 			initialization(fl, var);
 			if ((i = define_operator(str, var, fl)))
-				ret = ((j = output(ap, var, fl, str)) >= 0) ? ret + j : j;
+				ret = ((j = output(ap, var, fl, str, ex)) >= 0) ? ret + j : j;
 			// printf("\nj = %d\n", j);
 				// ret += output(ap, var, fl, str);
 			str = str + i;
@@ -124,7 +137,7 @@ int		symbol_check(char *str, t_flags *fl, t_arg *var, va_list ap)
 		ft_putchar(*str++);
 		ret = ret < 0 ? -1 : ret + 1;
 	}
-	ret = var->ex ? -1 : ret;
+	ret = *ex ? -1 : ret;
 	var->buff = !var->buff ? ft_memalloc(1) : var->buff;
 	return (ret);
 }
@@ -144,7 +157,7 @@ int		ft_printf(char *str, ...)
 		ex = 1;
 	var->ex = ex;
 	var->tmp = ft_strdup(str);
-	ret = symbol_check(var->tmp, flags, var, ap);
+	ret = symbol_check(var->tmp, flags, var, ap, &ex);
 	free(var);
 	free(flags);
 	va_end(ap);

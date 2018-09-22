@@ -46,7 +46,7 @@ char	*print_c(t_arg *var, t_flags *fl)
 	len = var->width == 0 ? 1 : var->width;
 	var->buff = (char *)malloc(sizeof(char) * (len + 1));
 	var->buff = set_pad(var->width - 1, var->buff, fl);
-	if (fl->minus == 1)
+	if (fl->minus == 1 && var->d != 0)
 	{
 		ft_memmove(&var->buff[1], &var->buff[0], var->width);
 		var->buff[0] = (char)var->d;

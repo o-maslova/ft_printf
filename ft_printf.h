@@ -12,13 +12,14 @@
 
 #ifndef FT_PRINTF_H
 # define FT_PRINTF_H
-# define STR ""
 # include <stdarg.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <locale.h>
 # include <limits.h>
 # include "./libft/libft.h"
+
+// static int	ex = 0;
 
 typedef struct		s_arg
 {
@@ -30,6 +31,7 @@ typedef struct		s_arg
 	char			*str;
 	wchar_t			*w_str;
 	int				width;
+	int				tmp_w;
 	short int		is_up;
 	short int		ex;
 }					t_arg;
@@ -58,7 +60,7 @@ int					ft_printf(char *fmt, ...);
 void				output_d(va_list tmp, t_arg *var, t_flags *flags);
 void				output_o_and_u(va_list tmp, t_arg *var, t_flags *flags);
 void				output_x(va_list tmp, t_arg *var, t_flags *flags);
-int					output_c(va_list tmp, t_arg *var, t_flags *flags, int ret);
+int					output_c(va_list tmp, t_arg *var, t_flags *flags, int ret, int *ex);
 void				initialization(t_flags *flags, t_arg *var);
 void				define_flag(char *str, t_flags *var, int lim);
 void				cast_d(t_arg *var, t_flags *fl);
@@ -79,7 +81,7 @@ char				*set_pad(int width, char *buff, t_flags *flags);
 char				*ft_itoa_base(uintmax_t nb, int base);
 char				*ft_uitoa(uintmax_t n);
 int					print_unicode(t_arg *var);
-int					print_uni_str(t_arg *var, int ret, int prsn);
+int					print_uni_str(t_arg *var, int ret, int prsn, int *ex);
 int					check(char *str, int lim);
 
 #endif

@@ -52,7 +52,12 @@ void		define_flag(char *str, t_flags *var, int lim)
 		if (str[i] == ' ')
 			var->space = 1;
 		if (str[i] == '*')
-			var->astr = 1;
+		{	
+			// if (str[i - 1] >= '1' && str[i - 1] <= '9')
+				var->astr = 1;
+			if (str[i + 1] >= '1' && str[i + 1] <= '9')
+				var->astr = -1;
+		}
 		if (str[i] == '.')
 		{
 			var->dot = str[i + 1] == '*' ? 1 : -1;
@@ -71,9 +76,6 @@ int			check(char *str, int lim)
 	while (j < lim)
 	{
 		if (ft_strchr("0123456789hljz#+-.*", str[j]))
-		// if ((str[j] >= '0' && str[j] <= '9') || str[j] == 'h' ||
-		// 	str[j] == 'l' || str[j] == 'j' || str[j] == 'z' || str[j] == '#' ||
-		// 	str[j] == '+' || str[j] == '-' || str[j] == '.' || str[j] == '*')
 			return (1);
 		if (str[j] == ' ' && str[j + 1] == '\0')
 			return (1);
@@ -113,7 +115,7 @@ void		modificator_check(char *str, t_flags *fl, int lim)
 	}
 }
 
-int			define_operator(char *str, t_arg *var, t_flags *flags)
+int			define_operator(char *str, t_arg *v, t_flags *flags)
 {
 	int		i;
 	int		j;
@@ -121,14 +123,10 @@ int			define_operator(char *str, t_arg *var, t_flags *flags)
 
 	i = 0;
 	j = 0;
-	// while (str[i] != 's' && str[i] != 'c' && str[i] != 'd' && str[i] != 'e'
-	// 		&& str[i] != 'i' && str[i] != 'u' && str[i] != 'U' && str[i] != 'o'
-	// 		&& str[i] != 'O' && str[i] != 'x' && str[i] != 'X' && str[i] != 'S'
-	// 		&& str[i] != 'p' && str[i] != 'D' && str[i] != 'C' && str[i] != '%'
-	// 		&& str[i] != '\n' && str[i] != '\0')
 	while ((!ft_isalpha(str[i]) || str[i] == 'h' || str[i] == 'l' ||
 			str[i] == 'j' || str[i] == 'z') && str[i] != '\0' && str[i] != '%')
 			i++;
+	// printf("str[i] = %c\n", str[i]);
 	if ((i > 0 && str[i] != '%' && !check(str, i)) || !str)
 		return (0);
 	tmp = ft_strsub(str, 0, i);
@@ -136,16 +134,20 @@ int			define_operator(char *str, t_arg *var, t_flags *flags)
 		return (0);
 	modificator_check(tmp, flags, i);
 	define_flag(str, flags, i);
-	while (str[j] == '#' || str[j] == '-' || str[j] == '+' || str[j] == '0')
+	while (ft_strchr("#-+0*", str[j]))
 		j++;
-	var->width = ft_atoi(&str[j]);
-	var->t = str[i] ? str[i] : 0;
-	if (!ft_strchr("sSpdDioOuUxXcC%", var->t))
+		// str[j] == '#' || str[j] == '-' || str[j] == '+' || str[j] == '0')
+		// j++;
+	v->width = ft_atoi(&str[j]);
+	v->t = str[i] ? str[i] : 0;
+	if (!ft_strchr("sSpdDioOuUxXcC%", v->t))
 	{
-		var->str = ft_strdup(&str[i]);
-		i = ft_strlen(var->str) + 1;
+		v->str = ft_strdup(&str[i]);
+		tmp = (tmp = ft_strchr(v->str, '}')) ? tmp : ft_strchr(v->str, '\n');
+		i = tmp - v->str <= 1 ? i : tmp - v->str;
+		// i = tmp ? (tmp - v->str) : i;
 		// return (i);
 	}
-	free(tmp);
+	// free(tmp);
 	return (++i);
 }

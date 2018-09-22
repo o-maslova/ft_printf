@@ -22,7 +22,7 @@ char	*print_o(t_arg *var, t_flags *fl)
 	str = ft_itoa_base(var->u, 8);
 	if (fl->prsn >= 0)
 		str = set_precision(ft_strlen(str), str, fl);
-	if (fl->nul != 1 && *str != '0' && (fl->hash == 1 || fl->space == 1))
+	if (fl->nul != 1 && *str != '0' && fl->hash == 1)//|| fl->space == 1))
 	{
 		c[0] = fl->hash == 1 ? '0' : ' ';
 		c[1] = '\0';
@@ -51,7 +51,7 @@ char	*print_x(t_arg *var, t_flags *fl)
 		fl->nul = 0;
 	if (fl->prsn >= 0)
 		str = set_precision(ft_strlen(str), str, fl);
-	if ((fl->format == 1 && fl->nul != 1 && *str && *str != '0')
+	if ((fl->format == 1 && fl->nul != 1 && *str && var->u != 0)
 		|| var->t == 'p')
 	{
 		var->str = ft_strjoin("0x", str);
