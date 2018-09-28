@@ -12,27 +12,27 @@
 
 #include "ft_printf.h"
 
-void	output_d(va_list tmp, t_arg *var, t_flags *flags)
+void	output_d(va_list tmp, t_arg *var, t_flags *fl)
 {
 	if (var->t == 'D' || var->t == 'd')
 	{
 		var->d = va_arg(tmp, intmax_t);
-		if (flags->l == 0)
-			flags->l = var->t == 'D' ? 1 : 0;
-		cast_d(var, flags);
-		if ((var->width == 0 || flags->minus == 1) && flags->nul == 1)
-			flags->nul = 0;
-		flags->negative = var->d < 0 ? 1 : 0;
-		if (flags->negative == 1 && -var->d < 0)
+		if (fl->l == 0)
+			fl->l = var->t == 'D' ? 1 : 0;
+		cast_d(var, fl);
+		if ((var->width == 0 || fl->minus == 1) && fl->nul == 1)
+			fl->nul = 0;
+		fl->negative = var->d < 0 ? 1 : 0;
+		if (fl->negative == 1 && -var->d < 0)
 			var->u = -var->d;
-		var->buff = print_d(var, flags);
+		var->buff = print_d(var, fl);
 	}
 	if (var->t == 'i')
 	{
 		var->d = va_arg(tmp, intmax_t);
-		cast_d(var, flags);
-		flags->negative = var->d < 0 ? 1 : 0;
-		var->buff = print_d(var, flags);
+		cast_d(var, fl);
+		fl->negative = var->d < 0 ? 1 : 0;
+		var->buff = print_d(var, fl);
 	}
 }
 
@@ -75,59 +75,66 @@ void	output_x(va_list tmp, t_arg *var, t_flags *flags)
 	}
 }
 
-int		out_uni_s(va_list tmp, t_arg *var, t_flags *flags, int ret, int *ex)
+int		output_C(va_list tmp, t_arg *var, t_flags *flags, int ret)
 {
-	var->buff = (char *)malloc(sizeof(char) * 5);
 	if (var->t == 'C')
 	{
 		var->d = va_arg(tmp, wchar_t);
-		if (MB_CUR_MAX == 4)
-			ret += print_unicode(var);
-		else if (MB_CUR_MAX == 1 && var->d <= 255)
-		{
-			*var->buff = (unsigned char)var->d;
-			ret += 1;
-		}
+		var->nul = var->d == 0 ? 1 : 0;
+		if (MB_CUR_MAX == 1 && var->d != 0 && var->d > 255)
+			return (-1);
+		else if (MB_CUR_MAX == 1 && var->d != 0 && var->d <= 255)
+			*var->buff = (char)var->d;
 		else
-			return (-2);
+			ret = print_unicode(var);
 	}
+	return (ret);
+}
+
+int		output_S(va_list tmp, t_arg *var, t_flags *fl, int ret, char *buff)
+{
 	if (var->t == 'S')
 	{
 		var->w_str = va_arg(tmp, wchar_t *);
+		var->nul = var->w_str == 0 ? 1 : 0;
 		if (var->w_str == NULL)
 		{
 			free(var->buff);
-			print_str(var, flags);
-			ret = flags->prsn > 0 ? ret + flags->prsn : ret + 6;
+			print_str(var, fl);
+			ret = fl->prsn > 0 ? ret + fl->prsn : ret + 6;
 		}
-		else if (flags->prsn == 0)
+		else if (fl->prsn == 0)
 		{
-			var->buff = print_str(var, flags);
-			var->ex = 0;
+			var->buff = print_str(var, fl);
+			ret = ft_strlen(var->buff);
 		}
-		else if (MB_CUR_MAX != 1 || *var->w_str <= 255)
-			ret = print_uni_str(var, ret, flags->prsn, ex);
+		else
+			ret = print_uni_str(var, ret, fl, buff);
 	}
-	if (var->d > 255 && var->t == 'C' && MB_CUR_MAX == 1)
-		return (-2);
-	ft_putstr(var->buff);
-	return (ret);//= var->ex ? -1 : ret));
+	return (ret);
 }
 
-int		output_c(va_list tmp, t_arg *var, t_flags *flags, int ret, int *ex)
+int		output_c(va_list tmp, t_arg *var, t_flags *fl, int ret, char *buff)
 {
-	if (var->t == 'S' || var->t == 'C')
-		ret = out_uni_s(tmp, var, flags, ret, ex);
+	var->buff = (char *)malloc(sizeof(char) * 5);
+	if (var->t == 'S')
+		ret = output_S(tmp, var, fl, ret, buff);
+	if ( var->t == 'C')
+		ret = output_C(tmp, var, fl, ret);
 	if (var->t == 'c')
 	{
 		var->d = va_arg(tmp, int);
-		var->d = (char)var->d;
-		ret = var->d == 0 ? ret + 1 : ret;
-		var->buff = print_c(var, flags);
-		ret += ft_strlen(var->buff);
-		ft_putstr(var->buff);
-		if (var->d == 0)
-			ft_putchar(var->d);
+		if (fl->l == 1 && MB_CUR_MAX != 1)
+			ret += print_unicode(var);
+		else if (MB_CUR_MAX == 1 && var->d > 255)
+			return (-1);
+		else
+		{
+			var->d = (char)var->d;
+			var->nul = var->d == 0 ? 1 : 0;
+			var->buff = print_c(var, fl);
+			ret = ft_strlen(var->buff);
+		}
 	}
 	return (ret);
 }

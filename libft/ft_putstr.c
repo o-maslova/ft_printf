@@ -18,5 +18,8 @@ void	ft_putstr(char const *s)
 
 	i = 0;
 	if (s)
-		write(1, s, ft_strlen(s));
+	{
+		while (s[i] != '\0')
+			write(1, &s[i++], 1);
+	}
 }

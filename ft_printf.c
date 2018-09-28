@@ -67,7 +67,7 @@ void	invalid(t_arg *var, t_flags *fl)
 	free(var->str);
 }
 
-int		output(va_list tmp, t_arg *var, t_flags *flags, char *str, int *ex)
+int		output(va_list tmp, t_arg *var, t_flags *flags, char *str, char *buff)
 {
 	int ret;
 
@@ -94,15 +94,105 @@ int		output(va_list tmp, t_arg *var, t_flags *flags, char *str, int *ex)
 	else if (var->t != 'c' && var->t != 'C' && var->t != 'S')
 		invalid(var, flags);
 	if (var->t == 'c' || var->t == 'C' || var->t == 'S')
-		return (output_c(tmp, var, flags, ret, ex));
-	ret += ft_strlen(var->buff);
-	ft_putstr(var->buff);
-	ft_bzero(var->buff, ft_strlen(var->buff));
+		return (output_c(tmp, var, flags, ret, buff));
+	ret = ft_strlen(var->buff);
+	// ft_putstr(var->buff);
+	// ft_bzero(var->buff, ft_strlen(var->buff));
 	// free(var->buff);
 	return (ret);// = var->ex == 1 ? -1 : ret));
 }
 
-int		symbol_check(char *str, t_flags *fl, t_arg *var, va_list ap, int *ex)
+/*int		check_str(char *str, t_arg *var)
+{
+	int i;
+	int check;
+
+	i = 0;
+	check = ft_strchr(str, 'c') ? 1 : 0;
+	while (str[i] != '\0')
+	{
+		if (MB_CUR_MAX == 1 && (var->t == 'S' || var->t == 'C' || var->t == 'c')
+			&& (unsigned char)str[i] > 255)
+		{
+			str[i] = '\0';
+			return (-1);
+		}
+		// printf("str[i] = %c   ", str[i]);
+		// if (check == 1 && (unsigned char)str[i++] > 255)
+		// 	return (-1);
+	}
+	return (1);
+}*/
+
+int		print(char *buff, int res, t_arg *var)
+{
+	int i;
+	int j;
+	int check;
+
+	i = 0;
+	j = 0;
+	check = -1;
+	if (buff[i] == '\0' && res != 0 && buff[i + 1] != '\0')
+		ft_putchar(buff[i++]);
+	while (j < k)
+	{
+		if (MB_CUR_MAX == 1 && buff[j] == 0)
+			check = 1;
+		else
+			check = (unsigned char)buff[j] > 255 ? j : 0;
+		j++;
+	}
+	// printf("k = %d\n", k);
+	while ((buff[i] != '\0') || check == 1)
+	{	
+		write(1, &buff[i++], 1);
+		if (buff[i] == '\0' && (buff[i] != '\0' || i < k))
+			write(1, &buff[i++], 1);
+		check = -1;
+	}
+	if (k == 1 && buff[i] == '\0' && var->nul == 1 && MB_CUR_MAX != 1)
+		write(1, &buff[i++], 1);
+	// if (i < width && buff[i] == '\0')
+	// 	write(1, &buff[i++], 1);
+	if ((MB_CUR_MAX == 1 && check != -1) || res == -1)
+		return (-1);
+	return (i);
+}
+
+
+void	buff_join(char *buff, char *str, int ret, t_arg *var)
+{
+	// static int	k;
+	int			i;
+	int			len;
+
+	i = 0;
+	if (!str)
+		return ;
+	len = ft_strlen(str);
+	while (i < len && k < BUFF_SIZE)
+	{
+		buff[k++] = str[i++];
+	}
+	if (var->nul == 1)
+	{
+		if (var->width > 0)
+			buff[var->width] = '\0';
+		else
+			buff[k] = '\0';
+		k++;
+	}
+	
+	// if (k == BUFF_SIZE)
+	// {
+	// 	k = 0;
+	// 	print(buff);
+	// 	ft_bzero(buff, 100);
+	// }
+}
+
+int		symbol_check(char *str, t_flags *fl, t_arg *var, va_list ap, char *buff)
 {
 	int			i;
 	int 		j;
@@ -113,32 +203,22 @@ int		symbol_check(char *str, t_flags *fl, t_arg *var, va_list ap, int *ex)
 	ret = 0;
 	while (*str)
 	{
-		if (var->ex && ft_strchr(str, 'S') && !ft_strchr(str, NULL))
-				ret = -2;
-		while (*str == '%')
+		while (*str == '%' && k < BUFF_SIZE)
 		{
 			++str;
 			initialization(fl, var);
 			if ((i = define_operator(str, var, fl)))
-				ret = ((j = output(ap, var, fl, str, ex)) >= 0) ? ret + j : j;
-			// printf("\nj = %d\n", j);
-				// ret += output(ap, var, fl, str);
+				ret = output(ap, var, fl, str, buff);
+			buff_join(buff, var->buff, ret, var);
 			str = str + i;
-			// if (*str == ' ' && ret < 0)
-			// 	str++;
-			// ret = MB_CUR_MAX == 1 ? -1 : ret;
-			// ft_bzero(var->buff, ft_strlen(var->buff));
-			// free(var->buff);
+			ft_bzero(var->buff, ft_strlen(var->buff));
 		}
-		if (!*str || *str == '\0' || ret == -2)//(var->ex && !ft_strchr(str, 'C')))// && (ft_strchr(str, 'S') || ft_strchr(str, 'C'))))
-			break ;
-		// if (*var->buff == '\0')
-		// 	free(var->buff);
-		ft_putchar(*str++);
-		ret = ret < 0 ? -1 : ret + 1;
+		if (ret == -1)
+			ft_bzero(&buff[k - j], BUFF_SIZE - k);
+		j = MB_CUR_MAX == 1 ? j + 1 : j;
+		if (*str != '\0')
+			buff[k++] = *str++;
 	}
-	ret = *ex ? -1 : ret;
-	var->buff = !var->buff ? ft_memalloc(1) : var->buff;
 	return (ret);
 }
 
@@ -147,17 +227,20 @@ int		ft_printf(char *str, ...)
 	t_flags		*flags;
 	t_arg		*var;
 	va_list		ap;
-	static int	ex;
-	int			ret;
+	static int	ret;
+	char		buff[BUFF_SIZE];
 
+	k = 0;
 	va_start(ap, str);
 	flags = (t_flags *)malloc(sizeof(t_flags));
 	var = (t_arg *)malloc(sizeof(t_arg));
-	if (ft_strchr(str, 'S') && MB_CUR_MAX == 1)
-		ex = 1;
-	var->ex = ex;
-	var->tmp = ft_strdup(str);
-	ret = symbol_check(var->tmp, flags, var, ap, &ex);
+	ft_bzero(buff, 100);
+	ret = symbol_check(str, flags, var, ap, buff);
+	// printf("res_1 = %d\n", ret);
+	// print(list, flags, var, ret);
+	ret = print(buff, ret, var);
+	// printf("res_2 = %d\n\n", print(buff));
+	// print(list, flags, var, ret);
 	free(var);
 	free(flags);
 	va_end(ap);

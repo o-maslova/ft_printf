@@ -41,26 +41,35 @@ int		print_unicode(t_arg *var)
 	return (i);
 }
 
-int		print_uni_str(t_arg *var, int ret, int prsn, int *ex)
+int		print_uni_str(t_arg *var, int ret, t_flags *fl, char *buff)
 {
-	int check;
-	int i;
+	int		check;
+	int		i;
 
 	i = 0;
 	check = -1;
-	while (*var->w_str)
+	while (MB_CUR_MAX == 1 && var->w_str[i] && check <= 0)
+		check = var->w_str[i++] <= 255 ? 0 : i;
+	
+	while (*var->w_str && (fl->prsn == -1 || ret < fl->prsn))
 	{
 		var->d = *var->w_str;
-		while (MB_CUR_MAX == 1 && var->w_str[i] && check <= 0)
-			check = var->w_str[i++] <= 255 ? 0 : i;
-		if (prsn == -1 && check > 0)
+		var->nul = var->d == 0 ? 1 : 0;
+		// while (MB_CUR_MAX == 1 && var->w_str[i] && check <= 0)
+		// 	check = var->w_str[i++] <= 255 ? 0 : i;
+		if (check > 0 && ret > fl->prsn)
 			return (-1);
-		if (prsn == -1 || ret < prsn)
+		if (*var->w_str <= 255 && MB_CUR_MAX == 1)
+		{
+			*var->buff = (char)var->d;
+			ret += 1;
+		}
+		else
 			ret += print_unicode(var);
-		ft_putstr(var->buff);
+		buff_join(buff, var->buff, ret, var);
 		ft_bzero(var->buff, 5);
 		var->w_str++;
-		var->d = 0;
+		// var->d = 0;
 	}
 	return (ret);
 }

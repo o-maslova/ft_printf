@@ -126,7 +126,6 @@ int			define_operator(char *str, t_arg *v, t_flags *flags)
 	while ((!ft_isalpha(str[i]) || str[i] == 'h' || str[i] == 'l' ||
 			str[i] == 'j' || str[i] == 'z') && str[i] != '\0' && str[i] != '%')
 			i++;
-	// printf("str[i] = %c\n", str[i]);
 	if ((i > 0 && str[i] != '%' && !check(str, i)) || !str)
 		return (0);
 	tmp = ft_strsub(str, 0, i);
@@ -136,8 +135,6 @@ int			define_operator(char *str, t_arg *v, t_flags *flags)
 	define_flag(str, flags, i);
 	while (ft_strchr("#-+0*", str[j]))
 		j++;
-		// str[j] == '#' || str[j] == '-' || str[j] == '+' || str[j] == '0')
-		// j++;
 	v->width = ft_atoi(&str[j]);
 	v->t = str[i] ? str[i] : 0;
 	if (!ft_strchr("sSpdDioOuUxXcC%", v->t))
@@ -145,8 +142,6 @@ int			define_operator(char *str, t_arg *v, t_flags *flags)
 		v->str = ft_strdup(&str[i]);
 		tmp = (tmp = ft_strchr(v->str, '}')) ? tmp : ft_strchr(v->str, '\n');
 		i = tmp - v->str <= 1 ? i : tmp - v->str;
-		// i = tmp ? (tmp - v->str) : i;
-		// return (i);
 	}
 	// free(tmp);
 	return (++i);
