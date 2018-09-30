@@ -12,59 +12,57 @@
 
 #include "ft_printf.h"
 
-char	*set_pad(int width, char *buff, t_flags *fl)
+char	*set_pad(int width, char *tmp, t_flags *fl)
 {
 	int i;
 
 	i = 0;
 	while (i < width)
 	{
-		// if ((fl->dot == -1 || fl->dot == 1) && *buff != '0')
-		// 	fl->nul = 0;
 		if (fl->nul == 1 && fl->minus != 1)
 		{
 			if ((fl->plus == 1 || fl->negative == 1) && i == 0)
-				buff[i++] = fl->negative == 1 ? '-' : '+';
+				tmp[i++] = fl->negative == 1 ? '-' : '+';
 			else if (fl->space == 1 && i == 0)
-				buff[i++] = ' ';
+				tmp[i++] = ' ';
 			else
-				buff[i++] = '0';
+				tmp[i++] = '0';
 		}
 		else
-			buff[i++] = ' ';
+			tmp[i++] = ' ';
 		if (fl->format == 1 && fl->nul == 1)
 		{
-			buff[0] = '0';
-			buff[1] = 'x';
+			tmp[0] = '0';
+			tmp[1] = 'x';
 		}
 	}
-	buff[i] = '\0';
-	return (buff);
+	tmp[i] = '\0';
+	return (tmp);
 }
 
 char	*set_precision(int len, char *str, t_flags *fl)
 {
 	int		i;
 	int		tmp;
-	char	*buff;
+	char	*tmp1;
 	char	*tmp2;
 
 	i = 0;
 	tmp = fl->prsn > len ? fl->prsn - len : 0;
-	buff = (char *)malloc(sizeof(char) * (tmp + 1));
+	tmp1 = (char *)malloc(sizeof(char) * (tmp + 1));
 	if (tmp || len > 1)
 	{
 		while (i < tmp)
-			buff[i++] = '0';
-		buff[i] = '\0';
-		tmp2 = ft_strjoin(buff, str);
-		free(buff);
+			tmp1[i++] = '0';
+		tmp1[i] = '\0';
+		tmp2 = ft_strjoin(tmp1, str);
+		free(tmp1);
 		free(str);
 		return (tmp2);
 	}
 	else
 		free(str);
-	return (buff);
+	return (tmp1);
 }
 
 char	*if_nul(t_flags *fl, char *str)
@@ -89,31 +87,30 @@ char	*if_nul(t_flags *fl, char *str)
 	return (new_str);
 }
 
-char	*print_d(t_arg *var, t_flags *fl)
+void	print_d(t_arg *v, t_flags *fl)
 {
 	char	*str;
-	char	*buff;
+	char	*tmp;
 	int		len;
 
-	if ((fl->dot == -1 || fl->dot == 1) && fl->prsn + 1 >= var->width)
+	if ((fl->dot == -1 || fl->dot == 1) && fl->prsn + 1 >= v->width)
 		fl->nul = 0;
-	var->d = fl->negative == 1 ? -var->d : var->d;
-	if (fl->negative == 1 && var->d < 0)
-		str = ft_uitoa(var->d);
+	v->d = fl->negative == 1 ? -v->d : v->d;
+	if (fl->negative == 1 && v->d < 0)
+		str = ft_uitoa(v->d);
 	else
-		str = ft_itoa(var->d);
+		str = ft_itoa(v->d);
 	str = fl->prsn >= 0 ? set_precision(ft_strlen(str), str, fl) : str;
 	if (fl->nul != 1 && (fl->negative == 1 || fl->plus == 1 || fl->space == 1))
 		str = if_nul(fl, str);
 	len = ft_strlen(str);
-	if (var->width < len  && var->width != 0 && fl->plus == 1)
-		var->width = 1;
+	if (v->width < len && v->width != 0 && fl->plus == 1)
+		v->width = 1;
 	else
-		var->width = var->width > len ? var->width - len : 0;
-	buff = (char *)malloc(sizeof(char) * (var->width + 1));
-	buff = set_pad(var->width, buff, fl);
-	var->buff = fl->minus == 1 ? ft_strjoin(str, buff) : ft_strjoin(buff, str);
-	free(buff);
+		v->width = v->width > len ? v->width - len : 0;
+	tmp = (char *)malloc(sizeof(char) * (v->width + 1));
+	tmp = set_pad(v->width, tmp, fl);
+	fl->minus == 1 ? concat(g_buff, str, tmp, v) : concat(g_buff, tmp, str, v);
+	free(tmp);
 	free(str);
-	return (var->buff);
 }

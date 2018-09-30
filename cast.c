@@ -12,6 +12,27 @@
 
 #include "ft_printf.h"
 
+void	initialization(t_flags *flags, t_arg *var)
+{
+	flags->minus = 0;
+	flags->plus = 0;
+	flags->hash = 0;
+	flags->nul = 0;
+	flags->space = 0;
+	flags->negative = 0;
+	flags->prsn = -1;
+	flags->dot = 0;
+	flags->format = 0;
+	flags->astr = 0;
+	flags->hh = 0;
+	flags->h = 0;
+	flags->ll = 0;
+	flags->l = 0;
+	flags->j = 0;
+	var->str = NULL;
+	var->nul = 0;
+}
+
 void	cast_d(t_arg *var, t_flags *fl)
 {
 	if (fl->hh == 1 && var->t != 'D')

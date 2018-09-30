@@ -74,7 +74,6 @@ SRC = ./ft_memset.c \
 		./ft_lst_print.c \
 		./ft_lst_swap.c \
 		./ft_sqrt.c \
-		./ft_strcheck.c \
 
 NAME = libft.a
 

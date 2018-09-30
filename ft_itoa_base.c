@@ -40,7 +40,7 @@ char	define_sym(int num)
 		return (num + 48);
 }
 
-int		count_num(intmax_t nb, int base)
+int		count_num(uintmax_t nb, int base)
 {
 	int i;
 

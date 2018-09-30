@@ -20,11 +20,12 @@
 # include <limits.h>
 # include "./libft/libft.h"
 
-int					k;
+int		g_k;
+int		g_result;
+char	g_buff[BUFF_SIZE];
 
 typedef struct		s_arg
 {
-	char			*buff;
 	char			t;
 	intmax_t		d;
 	uintmax_t		u;
@@ -32,7 +33,6 @@ typedef struct		s_arg
 	wchar_t			*w_str;
 	int				width;
 	int				tmp_w;
-	short int		is_up;
 	int				nul;
 }					t_arg;
 
@@ -58,20 +58,23 @@ typedef struct		s_flags
 
 int					ft_printf(char *fmt, ...);
 void				output_d(va_list tmp, t_arg *var, t_flags *fl);
-void				output_o_and_u(va_list tmp, t_arg *var, t_flags *fl);
+void				output_o_u_x(va_list tmp, t_arg *var, t_flags *fl);
+void				ouput_s_and_p(va_list tmp, t_arg *var, t_flags *flags);
 void				output_x(va_list tmp, t_arg *var, t_flags *fl);
-int					output_c(va_list tmp, t_arg *var, t_flags *fl, int ret, char *buff);
+int					output_c(va_list tmp, t_arg *var, t_flags *fl);
+void				invalid(t_arg *var, t_flags *fl);
 void				initialization(t_flags *fl, t_arg *var);
 void				define_flag(char *str, t_flags *var, int lim);
 void				cast_d(t_arg *var, t_flags *fl);
 void				cast_o(t_arg *var, t_flags *fl);
 int					define_operator(char *str, t_arg *var, t_flags *fl);
-char				*print_str(t_arg *var, t_flags *fl);
-char				*print_d(t_arg *var, t_flags *fl);
-char				*print_u(t_arg *var, t_flags *fl);
-char				*print_o(t_arg *var, t_flags *fl);
-char				*print_x(t_arg *var, t_flags *fl);
-char				*print_c(t_arg *var, t_flags *fl);
+void				print_str(t_arg *var, t_flags *fl, char *str);
+void				print_d(t_arg *var, t_flags *fl);
+void				print_u(t_arg *var, t_flags *fl);
+void				print_o(t_arg *var, t_flags *fl);
+void				print_x(t_arg *var, t_flags *fl, int up);
+void				print_c(t_arg *var, t_flags *fl);
+void				print_p(t_arg *var, t_flags *fl);
 char				*new_join(char *s1, char *s2);
 char				*to_upper(char *buff);
 void				undef_beh(t_flags *fl, char c);
@@ -81,9 +84,12 @@ char				*set_pad(int width, char *buff, t_flags *fl);
 char				*ft_itoa_base(uintmax_t nb, int base);
 char				*ft_uitoa(uintmax_t n);
 int					print_unicode(t_arg *var);
-int					print_uni_str(t_arg *var, int ret, t_flags *fl, char *buff);
+int					print_uni_str(t_arg *var, int ret, t_flags *fl);
+int					print_no_locale(t_arg *var, int ret, t_flags *fl);
 int					check(char *str, int lim);
 int					print(char *buff, int res, t_arg *var);
-void				buff_join(char *buff, char *str, int ret, t_arg *var);
+void				buff_join(char *buff, char *str, t_arg *var);
+void				nul_the_buf(char *buff, char *str, t_arg *var);
+void				concat(char *buff, char *str, char *tmp, t_arg *var);
 
 #endif

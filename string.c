@@ -12,47 +12,72 @@
 
 #include "ft_printf.h"
 
-char	*print_str(t_arg *var, t_flags *fl)
+void	concat(char *buff, char *str, char *tmp, t_arg *var)
 {
-	char	*buff;
-	int		len;
+	int i;
 
-	if (!var->str)
-		var->str = ft_strdup("(null)");
-	len = var->str ? ft_strlen(var->str) : 0;
-	if ((fl->prsn >= 0 && fl->prsn < len) || var->width > 0)
+	i = 0;
+	if (str)
 	{
-		var->str = ft_strsub(var->str, 0, fl->prsn);
-		len = ft_strlen(var->str);
-		var->width = var->width > len ? var->width - len : 0;
-		buff = (char *)malloc(sizeof(char) * (var->width + 1));
-		buff = set_pad(var->width, buff, fl);
-		if (fl->minus == 1)
-			var->buff = ft_strjoin(var->str, buff);
-		else
-			var->buff = ft_strjoin(buff, var->str);
-		free(var->str);
-		free(buff);
+		while (str[i] != '\0' && g_k < BUFF_SIZE)
+			g_buff[g_k++] = str[i++];
+		if (g_k >= BUFF_SIZE)
+			nul_the_buf(g_buff, &str[i], var);
 	}
-	else if (var->str)
-		var->buff = ft_strdup(var->str);
-	return (var->buff);
+	i = 0;
+	if (tmp)
+	{
+		while (tmp[i] != '\0' && g_k < BUFF_SIZE)
+			g_buff[g_k++] = tmp[i++];
+		if (g_k >= BUFF_SIZE)
+			nul_the_buf(g_buff, &tmp[i], var);
+	}
 }
 
-char	*print_c(t_arg *var, t_flags *fl)
+void	print_str(t_arg *v, t_flags *fl, char *str)
 {
-	int len;
+	char	*tmp;
+	int		len;
+
+	v->str = !str ? ft_strdup("(null)") : ft_strdup(str);
+	len = v->str ? ft_strlen(v->str) : 0;
+	if ((fl->prsn >= 0 && fl->prsn < len) || v->width > 0)
+	{
+		str = fl->prsn > 0 ? ft_strsub(v->str, 0, fl->prsn) : ft_strdup(v->str);
+		if (fl->prsn == 0)
+			ft_bzero(str, ft_strlen(str));
+		len = ft_strlen(str);
+		v->width = v->width > len ? v->width - len : 0;
+		tmp = (char *)malloc(sizeof(char) * (v->width + 1));
+		tmp = set_pad(v->width, tmp, fl);
+		if (fl->minus == 1)
+			concat(g_buff, str, tmp, v);
+		else
+			concat(g_buff, tmp, str, v);
+		free(str);
+		free(tmp);
+	}
+	else if (v->str)
+		concat(g_buff, v->str, NULL, v);
+	free(v->str);
+}
+
+void	print_c(t_arg *var, t_flags *fl)
+{
+	int		len;
+	char	*tmp;
 
 	len = var->width == 0 ? 1 : var->width;
-	var->buff = (char *)malloc(sizeof(char) * (len + 1));
-	var->buff = set_pad(var->width - 1, var->buff, fl);
+	tmp = (char *)malloc(sizeof(char) * (len + 1));
+	tmp = set_pad(var->width - 1, tmp, fl);
 	if (fl->minus == 1 && var->d != 0)
 	{
-		ft_memmove(&var->buff[1], &var->buff[0], var->width);
-		var->buff[0] = (char)var->d;
+		ft_memmove(&tmp[1], &tmp[0], var->width);
+		tmp[0] = (char)var->d;
 	}
 	else
-		var->buff[len - 1] = (char)var->d;
-	var->buff[len] = '\0';
-	return (var->buff);
+		tmp[len - 1] = (char)var->d;
+	tmp[len] = '\0';
+	buff_join(g_buff, tmp, var);
+	free(tmp);
 }

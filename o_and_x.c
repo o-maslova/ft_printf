@@ -12,38 +12,66 @@
 
 #include "ft_printf.h"
 
-char	*print_o(t_arg *var, t_flags *fl)
+void	print_o(t_arg *var, t_flags *fl)
 {
 	char	*str;
-	char	*buff;
+	char	*tmp;
 	int		len;
-	char	c[2];
 
 	str = ft_itoa_base(var->u, 8);
 	if (fl->prsn >= 0)
 		str = set_precision(ft_strlen(str), str, fl);
-	if (fl->nul != 1 && *str != '0' && fl->hash == 1)//|| fl->space == 1))
+	if (fl->nul != 1 && *str != '0' && fl->hash == 1)
 	{
-		c[0] = fl->hash == 1 ? '0' : ' ';
-		c[1] = '\0';
-		var->str = ft_strjoin(c, str);
+		var->str = fl->hash == 1 ? ft_strjoin("0", str) : ft_strjoin(" ", str);
 		free(str);
 		str = var->str;
 	}
 	len = ft_strlen(str);
 	var->width = var->width > len ? var->width - len : 0;
-	buff = (char *)malloc(sizeof(char) * (var->width + 1));
-	buff = set_pad(var->width, buff, fl);
-	var->buff = fl->minus == 1 ? ft_strjoin(str, buff) : ft_strjoin(buff, str);
-	free(buff);
+	tmp = (char *)malloc(sizeof(char) * (var->width + 1));
+	tmp = set_pad(var->width, tmp, fl);
+	if (fl->minus == 1)
+		concat(g_buff, str, tmp, var);
+	else
+		concat(g_buff, tmp, str, var);
+	free(tmp);
 	free(str);
-	return (var->buff);
 }
 
-char	*print_x(t_arg *var, t_flags *fl)
+void	print_x(t_arg *var, t_flags *fl, int up)
 {
 	char	*str;
-	char	*buff;
+	char	*tmp;
+	int		len;
+
+	str = !up ? ft_itoa_base(var->u, 16) : to_upper(ft_itoa_base(var->u, 16));
+	if (fl->nul == 1 && fl->minus == 1)
+		fl->nul = 0;
+	if (fl->prsn >= 0)
+		str = set_precision(ft_strlen(str), str, fl);
+	if (fl->format == 1 && fl->nul != 1 && *str && var->u != 0)
+	{
+		var->str = !up ? ft_strjoin("0x", str) : ft_strjoin("0X", str);
+		free(str);
+		str = var->str;
+	}
+	len = ft_strlen(str);
+	var->width = var->width > len ? var->width - len : 0;
+	tmp = (char *)malloc(sizeof(char) * (var->width + 1));
+	tmp = set_pad(var->width, tmp, fl);
+	if (fl->minus == 1)
+		concat(g_buff, str, tmp, var);
+	else
+		concat(g_buff, tmp, str, var);
+	free(tmp);
+	free(str);
+}
+
+void	print_p(t_arg *var, t_flags *fl)
+{
+	char	*str;
+	char	*tmp;
 	int		len;
 
 	str = ft_itoa_base(var->u, 16);
@@ -51,8 +79,7 @@ char	*print_x(t_arg *var, t_flags *fl)
 		fl->nul = 0;
 	if (fl->prsn >= 0)
 		str = set_precision(ft_strlen(str), str, fl);
-	if ((fl->format == 1 && fl->nul != 1 && *str && var->u != 0)
-		|| var->t == 'p')
+	if ((*str || fl->prsn >= 0) && fl->nul != 1)
 	{
 		var->str = ft_strjoin("0x", str);
 		free(str);
@@ -60,10 +87,12 @@ char	*print_x(t_arg *var, t_flags *fl)
 	}
 	len = ft_strlen(str);
 	var->width = var->width > len ? var->width - len : 0;
-	buff = (char *)malloc(sizeof(char) * (var->width + 1));
-	buff = set_pad(var->width, buff, fl);
-	var->buff = fl->minus == 1 ? ft_strjoin(str, buff) : ft_strjoin(buff, str);
-	free(buff);
+	tmp = (char *)malloc(sizeof(char) * (var->width + 1));
+	tmp = set_pad(var->width, tmp, fl);
+	if (fl->minus == 1)
+		concat(g_buff, str, tmp, var);
+	else
+		concat(g_buff, tmp, str, var);
+	free(tmp);
 	free(str);
-	return (var->buff);
 }

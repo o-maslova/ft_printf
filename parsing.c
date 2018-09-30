@@ -12,28 +12,7 @@
 
 #include "ft_printf.h"
 
-void		initialization(t_flags *flags, t_arg *var)
-{
-	flags->minus = 0;
-	flags->plus = 0;
-	flags->hash = 0;
-	flags->nul = 0;
-	flags->space = 0;
-	flags->negative = 0;
-	flags->prsn = -1;
-	flags->dot = 0;
-	flags->format = 0;
-	flags->astr = 0;
-	flags->hh = 0;
-	flags->h = 0;
-	flags->ll = 0;
-	flags->l = 0;
-	flags->j = 0;
-	var->buff = NULL;
-	var->str = NULL;
-}
-
-void		define_flag(char *str, t_flags *var, int lim)
+void	define_flag(char *str, t_flags *var, int lim)
 {
 	int i;
 
@@ -52,12 +31,7 @@ void		define_flag(char *str, t_flags *var, int lim)
 		if (str[i] == ' ')
 			var->space = 1;
 		if (str[i] == '*')
-		{	
-			// if (str[i - 1] >= '1' && str[i - 1] <= '9')
-				var->astr = 1;
-			if (str[i + 1] >= '1' && str[i + 1] <= '9')
-				var->astr = -1;
-		}
+			var->astr = (ft_strchr("123456789", str[i + 1])) ? -1 : 1;
 		if (str[i] == '.')
 		{
 			var->dot = str[i + 1] == '*' ? 1 : -1;
@@ -66,7 +40,7 @@ void		define_flag(char *str, t_flags *var, int lim)
 	}
 }
 
-int			check(char *str, int lim)
+int		check(char *str, int lim)
 {
 	int check;
 	int j;
@@ -90,7 +64,7 @@ int			check(char *str, int lim)
 	return (0);
 }
 
-void		modificator_check(char *str, t_flags *fl, int lim)
+void	modificator_check(char *str, t_flags *fl, int lim)
 {
 	int i;
 
@@ -115,7 +89,26 @@ void		modificator_check(char *str, t_flags *fl, int lim)
 	}
 }
 
-int			define_operator(char *str, t_arg *v, t_flags *flags)
+int		define_continue(t_arg *v, int i, char *str, char *trash)
+{
+	char *tmp;
+	char *ptr;
+
+	if (!ft_strchr("sSpdDioOuUxXcC%", v->t))
+	{
+		if (v->width > 0)
+			v->str = ft_strdup(&str[i]);
+		else
+			v->str = ft_strsub(&str[i], 0, i);
+		ptr = ft_strchr(v->str, '}');
+		tmp = ptr ? ptr : ft_strchr(v->str, '\n');
+		i = tmp - v->str <= 1 ? i : tmp - v->str;
+	}
+	free(trash);
+	return (i);
+}
+
+int		define_operator(char *str, t_arg *v, t_flags *flags)
 {
 	int		i;
 	int		j;
@@ -125,24 +118,21 @@ int			define_operator(char *str, t_arg *v, t_flags *flags)
 	j = 0;
 	while ((!ft_isalpha(str[i]) || str[i] == 'h' || str[i] == 'l' ||
 			str[i] == 'j' || str[i] == 'z') && str[i] != '\0' && str[i] != '%')
-			i++;
+		i++;
 	if ((i > 0 && str[i] != '%' && !check(str, i)) || !str)
 		return (0);
 	tmp = ft_strsub(str, 0, i);
 	if (*tmp == '\0' && *str == '\0')
+	{
+		free(tmp);
 		return (0);
+	}
 	modificator_check(tmp, flags, i);
 	define_flag(str, flags, i);
 	while (ft_strchr("#-+0*", str[j]))
 		j++;
 	v->width = ft_atoi(&str[j]);
 	v->t = str[i] ? str[i] : 0;
-	if (!ft_strchr("sSpdDioOuUxXcC%", v->t))
-	{
-		v->str = ft_strdup(&str[i]);
-		tmp = (tmp = ft_strchr(v->str, '}')) ? tmp : ft_strchr(v->str, '\n');
-		i = tmp - v->str <= 1 ? i : tmp - v->str;
-	}
-	// free(tmp);
+	i = define_continue(v, i, str, tmp);
 	return (++i);
 }

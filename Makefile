@@ -12,7 +12,17 @@
 
 NAME = libftprintf.a
 
-SRC = ./ft_printf.c ./integer.c ./uinteger.c ./string.c ./ft_itoa_base.c ./o_and_x.c ./parsing.c ./output.c ./cast.c ./unicode.c
+SRC = ./ft_printf.c \
+	./integer.c \
+	./uinteger.c \
+	./string.c \
+	./ft_itoa_base.c \
+	./o_and_x.c \
+	./parsing.c \
+	./output.c \
+	./cast.c \
+	./unicode.c \
+	./extra_fun.c
 
 FLAGS = -Wall -Wextra -Werror
 
