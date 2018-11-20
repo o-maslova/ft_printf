@@ -6,7 +6,7 @@
 /*   By: omaslova <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/29 15:47:44 by omaslova          #+#    #+#             */
-/*   Updated: 2018/08/29 15:47:48 by omaslova         ###   ########.fr       */
+/*   Updated: 2018/11/20 16:53:36 by omaslova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,11 @@ void	output_o_u_x(va_list tmp, t_arg *var, t_flags *flags)
 	}
 }
 
-int		output_wc(va_list tmp, t_arg *var, t_flags *flags)
+int		output_wc(va_list tmp, t_arg *var)
 {
 	int res;
 
+	res = 0;
 	var->d = va_arg(tmp, wchar_t);
 	var->nul = var->d == 0 ? 1 : 0;
 	if (MB_CUR_MAX == 1 && var->d != 0 && var->d > 255)
@@ -96,9 +97,9 @@ int		output_ws(va_list tmp, t_arg *var, t_flags *fl)
 	else if (fl->prsn == 0)
 		print_str(var, fl, NULL);
 	else if (MB_CUR_MAX == 1)
-		res = print_no_locale(var, res, fl);
+		res = print_no_locale(var, fl);
 	else
-		res = print_uni_str(var, res, fl);
+		res = print_uni_str(var, fl);
 	return (res);
 }
 
@@ -106,10 +107,11 @@ int		output_c(va_list tmp, t_arg *var, t_flags *fl)
 {
 	int res;
 
+	res = 0;
 	if (var->t == 'S' || (var->t == 's' && fl->l == 1))
 		res = output_ws(tmp, var, fl);
 	else if (var->t == 'C' || (var->t == 'c' && fl->l == 1))
-		res = output_wc(tmp, var, fl);
+		res = output_wc(tmp, var);
 	else if (var->t == 'c')
 	{
 		var->d = va_arg(tmp, int);

@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-void	concat(char *buff, char *str, char *tmp, t_arg *var)
+void	concat(char *str, char *tmp, t_arg *var)
 {
 	int i;
 
@@ -51,14 +51,14 @@ void	print_str(t_arg *v, t_flags *fl, char *str)
 		tmp = (char *)malloc(sizeof(char) * (v->width + 1));
 		tmp = set_pad(v->width, tmp, fl);
 		if (fl->minus == 1)
-			concat(g_buff, str, tmp, v);
+			concat(str, tmp, v);
 		else
-			concat(g_buff, tmp, str, v);
+			concat(tmp, str, v);
 		free(str);
 		free(tmp);
 	}
 	else if (v->str)
-		concat(g_buff, v->str, NULL, v);
+		concat(v->str, NULL, v);
 	free(v->str);
 }
 

@@ -23,7 +23,8 @@ char	*set_pad(int width, char *tmp, t_flags *fl)
 		{
 			if ((fl->plus == 1 || fl->negative == 1) && i == 0)
 				tmp[i++] = fl->negative == 1 ? '-' : '+';
-			else if (fl->space == 1 && i == 0)
+			else if ((fl->space == 1 && i == 0) || (fl->prsn != -1 &&
+				fl->prsn <= width))
 				tmp[i++] = ' ';
 			else
 				tmp[i++] = '0';
@@ -110,7 +111,7 @@ void	print_d(t_arg *v, t_flags *fl)
 		v->width = v->width > len ? v->width - len : 0;
 	tmp = (char *)malloc(sizeof(char) * (v->width + 1));
 	tmp = set_pad(v->width, tmp, fl);
-	fl->minus == 1 ? concat(g_buff, str, tmp, v) : concat(g_buff, tmp, str, v);
+	fl->minus == 1 ? concat(str, tmp, v) : concat(tmp, str, v);
 	free(tmp);
 	free(str);
 }

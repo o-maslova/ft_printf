@@ -70,9 +70,9 @@ void	invalid(t_arg *var, t_flags *fl)
 	tmp = (char *)malloc(sizeof(char) * (var->width + 1));
 	tmp = set_pad(var->width, tmp, fl);
 	if (fl->minus == 1 && *tmp != '\0')
-		concat(g_buff, var->str, tmp, var);
+		concat(var->str, tmp, var);
 	else if (*tmp != '\0')
-		concat(g_buff, tmp, var->str, var);
+		concat(tmp, var->str, var);
 	else
 		g_buff[g_k++] = var->t;
 	free(tmp);
@@ -82,7 +82,6 @@ void	invalid(t_arg *var, t_flags *fl)
 void	nul_the_buf(char *buff, char *str, t_arg *var)
 {
 	int i;
-	int tmp;
 
 	i = 0;
 	g_k = 0;

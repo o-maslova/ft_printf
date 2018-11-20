@@ -84,12 +84,12 @@ char				*set_pad(int width, char *buff, t_flags *fl);
 char				*ft_itoa_base(uintmax_t nb, int base);
 char				*ft_uitoa(uintmax_t n);
 int					print_unicode(t_arg *var);
-int					print_uni_str(t_arg *var, int ret, t_flags *fl);
-int					print_no_locale(t_arg *var, int ret, t_flags *fl);
+int					print_uni_str(t_arg *var, t_flags *fl);
+int					print_no_locale(t_arg *var, t_flags *fl);
 int					check(char *str, int lim);
 int					print(char *buff, int res, t_arg *var);
 void				buff_join(char *buff, char *str, t_arg *var);
 void				nul_the_buf(char *buff, char *str, t_arg *var);
-void				concat(char *buff, char *str, char *tmp, t_arg *var);
+void				concat(char *str, char *tmp, t_arg *var);
 
 #endif

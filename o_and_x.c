@@ -32,9 +32,9 @@ void	print_o(t_arg *var, t_flags *fl)
 	tmp = (char *)malloc(sizeof(char) * (var->width + 1));
 	tmp = set_pad(var->width, tmp, fl);
 	if (fl->minus == 1)
-		concat(g_buff, str, tmp, var);
+		concat(str, tmp, var);
 	else
-		concat(g_buff, tmp, str, var);
+		concat(tmp, str, var);
 	free(tmp);
 	free(str);
 }
@@ -61,9 +61,9 @@ void	print_x(t_arg *var, t_flags *fl, int up)
 	tmp = (char *)malloc(sizeof(char) * (var->width + 1));
 	tmp = set_pad(var->width, tmp, fl);
 	if (fl->minus == 1)
-		concat(g_buff, str, tmp, var);
+		concat(str, tmp, var);
 	else
-		concat(g_buff, tmp, str, var);
+		concat(tmp, str, var);
 	free(tmp);
 	free(str);
 }
@@ -90,9 +90,9 @@ void	print_p(t_arg *var, t_flags *fl)
 	tmp = (char *)malloc(sizeof(char) * (var->width + 1));
 	tmp = set_pad(var->width, tmp, fl);
 	if (fl->minus == 1)
-		concat(g_buff, str, tmp, var);
+		concat(str, tmp, var);
 	else
-		concat(g_buff, tmp, str, var);
+		concat(tmp, str, var);
 	free(tmp);
 	free(str);
 }

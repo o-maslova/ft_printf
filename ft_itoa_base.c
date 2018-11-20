@@ -45,7 +45,7 @@ int		count_num(uintmax_t nb, int base)
 	int i;
 
 	i = 1;
-	while (nb > base)
+	while (nb > (uintmax_t)base)
 	{
 		i++;
 		nb = nb / base;

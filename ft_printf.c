@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-int		output(va_list tmp, t_arg *var, t_flags *flags, char *str)
+int		output(va_list tmp, t_arg *var, t_flags *flags)
 {
 	if (!var->t)
 		return (0);
@@ -95,7 +95,7 @@ int		symbol_check(char *str, t_flags *fl, t_arg *var, va_list ap)
 			++str;
 			initialization(fl, var);
 			if ((i = define_operator(str, var, fl)))
-				ret = output(ap, var, fl, str);
+				ret = output(ap, var, fl);
 			str = str + i;
 		}
 		ret == -1 ? ft_bzero(&g_buff[g_k - j], BUFF_SIZE - g_k) : 0;

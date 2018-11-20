@@ -6,11 +6,13 @@
 #    By: omaslova <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/07/31 18:15:17 by omaslova          #+#    #+#              #
-#    Updated: 2018/07/31 18:17:52 by omaslova         ###   ########.fr        #
+#    Updated: 2018/11/20 15:29:08 by omaslova         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
 NAME = libftprintf.a
+
+LIB = ./libft/libft.a
 
 SRC = ./ft_printf.c \
 	./integer.c \
@@ -26,25 +28,26 @@ SRC = ./ft_printf.c \
 
 FLAGS = -Wall -Wextra -Werror
 
-LIBS = ./libft/libft.a
+BINS = $(SRC:.c=.o)
 
-OBJS = $(SRC:.c=.o)
+all: lib $(NAME)
 
-all: $(NAME)
+lib:
+	make -C libft
 
-$(NAME):
-	gcc -c $(FLAGS) libft/*.c -I libft/libft.h
-	gcc -c $(SRC)
+$(NAME): $(BINS) $(LIB)
 	ar rc $(NAME) *.o
-	
-%.o%.c:
-	gcc $(FLAGS) -o $< -c &< $(LIBS)
+
+%.o: %.c
+	gcc $(FLAGS) -o $@ -c $< -I libft
 
 clean:
-	rm -rf *.o libft/*.o
-	rm -f *~
+	make clean -C libft
+	/bin/rm -r $(BINS)
+	/bin/rm -f *~
 
 fclean: clean
-	rm -rf $(NAME) libft/*.a
+	make fclean -C libft
+	/bin/rm -r $(NAME)
 
 re: fclean all

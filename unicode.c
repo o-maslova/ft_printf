@@ -44,7 +44,6 @@ int		print_unicode(t_arg *var)
 int		print_with_width(t_arg *var, int res, t_flags *fl)
 {
 	int		len;
-	char	*str;
 
 	free(var->str);
 	len = ft_strlen(g_buff);
@@ -54,7 +53,7 @@ int		print_with_width(t_arg *var, int res, t_flags *fl)
 	return (res);
 }
 
-int		print_no_locale(t_arg *var, int ret, t_flags *fl)
+int		print_no_locale(t_arg *var, t_flags *fl)
 {
 	int		check;
 	int		i;
@@ -82,7 +81,7 @@ int		print_no_locale(t_arg *var, int ret, t_flags *fl)
 	return (i);
 }
 
-int		print_uni_str(t_arg *var, int ret, t_flags *fl)
+int		print_uni_str(t_arg *var, t_flags *fl)
 {
 	int		check;
 	int		i;
